@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airway Management & Trauma Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .question-card {
+            background: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .question-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .options label {
+            display: block;
+            margin: 8px 0;
+            cursor: pointer;
+        }
+        .feedback {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .correct {
+            color: #27ae60;
+        }
+        .incorrect {
+            color: #c0392b;
+        }
+        #submit-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #2980b9;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #submit-btn:hover {
+            background-color: #2471a3;
+        }
+        #score-display {
+            text-align: center;
+            font-size: 20px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Airway Management & Trauma Quiz</h1>
+    
+    <form id="quiz-form">
+        <div id="quiz-container"></div>
+        <button type="button" id="submit-btn" onclick="gradeQuiz()">Submit Answers</button>
+    </form>
+
+    <div id="score-display"></div>
+
+    <script>
+        const quizData = [
+            {
+                n: 1,
+                question: "What is the primary goal of airway management in major trauma patients?",
+                options: [
+                    "A. Immediate extubation",
+                    "B. Ensuring adequate oxygenation and ventilation while protecting the airway from aspiration",
+                    "C. Reducing heart rate",
+                    "D. Administering prophylactic antibiotics"
+                ],
+                answer: 1 // Index of option B (0-based)
+            },
+            {
+                n: 2,
+                question: "Which of the following is an anatomical sign of upper airway obstruction?",
+                options: [
+                    "A. Wheezing",
+                    "B. Stridor",
+                    "C. Fine crackles",
+                    "D. Clear breath sounds"
+                ],
+                answer: 1
+            },
+            {
+                n: 3,
+                question: "What is the most common cause of airway obstruction in an unconscious trauma patient?",
+                options: [
+                    "A. Foreign body",
+                    "B. Laryngospasm",
+                    "C. Tongue falling backward",
+                    "D. Epiglottitis"
+                ],
+                answer: 2
+            },
+            {
+                n: 4,
+                question: "Which manual maneuver is preferred for opening the airway in a trauma patient with suspected cervical spine injury?",
+                options: [
+                    "A. Head-tilt, chin-lift",
+                    "B. Jaw-thrust without head extension",
+                    "C. Neck hyperextension",
+                    "D. Finger sweep"
+                ],
+                answer: 1
+            },
+            {
+                n: 5,
+                question: "When is a nasopharyngeal airway (NPA) strictly contraindicated?",
+                options: [
+                    "A. In conscious patients with a gag reflex",
+                    "B. In patients with severe midface fractures or suspected cribriform plate fracture",
+                    "C. In patients with an intact gag reflex",
+                    "D. In pediatric patients"
+                ],
+                answer: 1
+            },
+            {
+                n: 6,
+                question: "What is considered the definitive method of airway control in a severe trauma patient?",
+                options: [
+                    "A. Oropharyngeal airway",
+                    "B. Nasopharyngeal airway",
+                    "C. Endotracheal intubation",
+                    "D. Simple face mask"
+                ],
+                answer: 2
+            },
+            {
+                n: 7,
+                question: "Which clinical assessment tool is commonly used to predict difficult intubation?",
+                options: [
+                    "A. Glasgow Coma Scale",
+                    "B. Mallampati classification",
+                    "C. APGAR score",
+                    "D. SOFA score"
+                ],
+                answer: 1
+            },
+            {
+                n: 8,
+                question: "What is the immediate action if a patient exhibits gurgling sounds and fluid in the airway?",
+                options: [
+                    "A. Administer a bronchodilator",
+                    "B. Immediate suctioning of the airway",
+                    "C. Perform a cricothyroidotomy",
+                    "D. Administer intravenous steroids"
+                ],
+                answer: 1
+            },
+            {
+                n: 9,
+                question: "Which surgical airway procedure is indicated when endotracheal intubation is impossible due to severe maxillofacial trauma?",
+                options: [
+                    "A. Tracheostomy",
+                    "B. Needle or surgical cricothyroidotomy",
+                    "C. Thoracostomy",
+                    "D. Pericardiocentesis"
+                ],
+                answer: 1
+            },
+            {
+                n: 10,
+                question: "What is the primary purpose of using capnography (EtCO2) after endotracheal intubation?",
+                options: [
+                    "A. To measure blood pressure",
+                    "B. To confirm correct endotracheal tube placement in the trachea",
+                    "C. To evaluate liver function",
+                    "D. To monitor core body temperature"
+                ],
+                answer: 1
+            }
+        ];
+
+        function loadQuiz() {
+            const container = document.getElementById('quiz-container');
+            let output = '';
+
+            quizData.forEach((q, qIndex) => {
+                output += `<div class="question-card">
+                    <div class="question-title">${q.n}. ${q.question}</div>
+                    <div class="options">`;
+                
+                q.options.forEach((opt, optIndex) => {
+                    output += `<label><input type="radio" name="q${qIndex}" value="${optIndex}"> ${opt}</label>`;
+                });
+
+                output += `</div><div class="feedback" id="feedback-${qIndex}"></div></div>`;
+            });
+
+            container.innerHTML = output;
+        }
+
+        function gradeQuiz() {
+            let score = 0;
+
+            quizData.forEach((q, qIndex) => {
+                const selected = document.querySelector(`input[name="q${qIndex}"]:checked`);
+                const feedbackEl = document.getElementById(`feedback-${qIndex}`);
+
+                if (selected) {
+                    const userAnswer = parseInt(selected.value);
+                    if (userAnswer === q.answer) {
+                        score++;
+                        feedbackEl.textContent = "Correct!";
+                        feedbackEl.className = "feedback correct";
+                    } else {
+                        feedbackEl.textContent = `Incorrect. Correct answer: ${q.options[q.answer]}`;
+                        feedbackEl.className = "feedback incorrect";
+                    }
+                } else {
+                    feedbackEl.textContent = `Unanswered. Correct answer: ${q.options[q.answer]}`;
+                    feedbackEl.className = "feedback incorrect";
+                }
+            });
+
+            document.getElementById('score-display').textContent = `Your Score: ${score} / ${quizData.length}`;
+        }
+
+        window.onload = loadQuiz;
+    </script>
+</body>
+</html>
