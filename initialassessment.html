@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Major Trauma & Initial Assessment Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .question-card {
+            background: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .question-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .options label {
+            display: block;
+            margin: 8px 0;
+            cursor: pointer;
+        }
+        .feedback {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .correct {
+            color: #27ae60;
+        }
+        .incorrect {
+            color: #c0392b;
+        }
+        #submit-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #2980b9;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #submit-btn:hover {
+            background-color: #2471a3;
+        }
+        #score-display {
+            text-align: center;
+            font-size: 20px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Major Trauma & Initial Assessment Quiz</h1>
+    
+    <form id="quiz-form">
+        <div id="quiz-container"></div>
+        <button type="button" id="submit-btn" onclick="gradeQuiz()">Submit Answers</button>
+    </form>
+
+    <div id="score-display"></div>
+
+    <script>
+        const quizData = [
+            {
+                n: 1,
+                question: "What is the definition of major trauma?",
+                options: [
+                    "A. Any injury requiring hospital admission",
+                    "B. A clinical syndrome induced by injury that has the potential to cause prolonged disability or death",
+                    "C. Blunt force trauma only",
+                    "D. Any injury associated with external bleeding"
+                ],
+                answer: 1 // Index of option B (0-based)
+            },
+            {
+                n: 2,
+                question: "Which of the following is a key objective during the Pre Hospital Phase?",
+                options: [
+                    "A. Overzealous fluid resuscitation",
+                    "B. Delaying transport to perform comprehensive secondary surveys",
+                    "C. Early administration of tranexamic acid",
+                    "D. Withholding cervical immobilization until confirmed by X-ray"
+                ],
+                answer: 2
+            },
+            {
+                n: 3,
+                question: "What does the \"M\" stand for in the AT-MIST trauma handover structure?",
+                options: [
+                    "A. Medication history",
+                    "B. Mechanism of injury",
+                    "C. Medical allergies",
+                    "D. Motor response"
+                ],
+                answer: 1
+            },
+            {
+                n: 4,
+                question: "During the 5-second rapid assessment, what is NOT explicitly assessed?",
+                options: [
+                    "A. Patent airway",
+                    "B. Central pulse",
+                    "C. Detailed neurological deficits (e.g., specific cranial nerve exam)",
+                    "D. Visible catastrophic hemorrhage"
+                ],
+                answer: 2
+            },
+            {
+                n: 5,
+                question: "What is the very first priority in the Primary Survey?",
+                options: [
+                    "A. Cervical spine clearance",
+                    "B. Circulation assessment",
+                    "C. Control of catastrophic hemorrhage",
+                    "D. Chest X-ray"
+                ],
+                answer: 2
+            },
+            {
+                n: 6,
+                question: "Which of the following is an appropriate initial resuscitation measure regarding oxygenation?",
+                options: [
+                    "A. Administer O2",
+                    "B. Administer Helium",
+                    "C. Administer Carbon Dioxide",
+                    "D. Withhold O2 unless indicated by ABG"
+                ],
+                answer: 0
+            },
+            {
+                n: 7,
+                question: "Which of the following is a late sign of airway obstruction?",
+                options: [
+                    "A. Agitation",
+                    "B. Snoring",
+                    "C. Cyanosis",
+                    "D. Use of accessory muscles"
+                ],
+                answer: 2
+            },
+            {
+                n: 8,
+                question: "If a patient is able to communicate verbally, what can generally be concluded during the rapid assessment of the airway?",
+                options: [
+                    "A. The airway is completely obstructed",
+                    "B. The airway is likely to be patent",
+                    "C. Intubation is immediately required",
+                    "D. The patient has a tension pneumothorax"
+                ],
+                answer: 1
+            },
+            {
+                n: 9,
+                question: "When a cervical immobilization device needs to be removed temporarily, what must be done?",
+                options: [
+                    "A. Administer a muscle relaxant",
+                    "B. Manual stabilization of the head and neck using in-line immobilization technique",
+                    "C. Ask the patient to hold their head still",
+                    "D. Proceed without any stabilization"
+                ],
+                answer: 1
+            },
+            {
+                n: 10,
+                question: "Which life-threatening condition associated with breathing should be identified during the Primary Survey?",
+                options: [
+                    "A. Tension Pneumothorax",
+                    "B. Simple rib fracture",
+                    "C. Mild asthma",
+                    "D. Allergic rhinitis"
+                ],
+                answer: 0
+            },
+            {
+                n: 11,
+                question: "Which pharmacological adjunct is used for hemorrhage control?",
+                options: [
+                    "A. Aspirin",
+                    "B. Tranexamic acid",
+                    "C. Heparin",
+                    "D. Warfarin"
+                ],
+                answer: 1
+            },
+            {
+                n: 12,
+                question: "When identifying the source of internal bleeding, which area is considered a major site?",
+                options: [
+                    "A. Cranial vault",
+                    "B. Retroperitoneum",
+                    "C. Phalanges",
+                    "D. Anterior compartment of the lower leg"
+                ],
+                answer: 1
+            },
+            {
+                n: 13,
+                question: "What scoring system is recommended to establish the level of consciousness during the disability evaluation?",
+                options: [
+                    "A. APGAR score",
+                    "B. Glasgow Coma Scale",
+                    "C. SOFA score",
+                    "D. Injury Severity Score (ISS)"
+                ],
+                answer: 1
+            },
+            {
+                n: 14,
+                question: "Why should wet clothing be removed early during the Exposure and Environmental Control phase?",
+                options: [
+                    "A. To prevent hypothermia",
+                    "B. To facilitate faster X-rays",
+                    "C. To prevent skin infections",
+                    "D. To allow the patient to wear hospital gowns"
+                ],
+                answer: 0
+            },
+            {
+                n: 15,
+                question: "Under what circumstance may a logroll examination be delayed?",
+                options: [
+                    "A. If the patient is uncooperative",
+                    "B. If there is a suspected unstable pelvic fracture",
+                    "C. If the patient has a confirmed tension pneumothorax",
+                    "D. Logroll should never be delayed"
+                ],
+                answer: 1
+            },
+            {
+                n: 16,
+                question: "What is the purpose of the \"Back Sweep\" technique?",
+                options: [
+                    "A. To massage the back muscles",
+                    "B. To clear airway secretions",
+                    "C. To rule out immediate life-threatening injuries on the posterior torso",
+                    "D. To assess spinal reflexes"
+                ],
+                answer: 2
+            },
+            {
+                n: 17,
+                question: "When is a routine Digital Rectal Examination (DRE) indicated for all trauma patients?",
+                options: [
+                    "A. Always, it is a mandatory part of the primary survey",
+                    "B. Never, it should not be performed routinely for all trauma patients",
+                    "C. Only if the patient has abdominal pain",
+                    "D. Only if the patient has isolated head trauma"
+                ],
+                answer: 1
+            },
+            {
+                n: 18,
+                question: "Which of the following is considered an adjunct to the Primary Survey?",
+                options: [
+                    "A. CT Angiography",
+                    "B. MRI Spine",
+                    "C. e-FAST",
+                    "D. Barium swallow"
+                ],
+                answer: 2
+            },
+            {
+                n: 19,
+                question: "When should the Secondary Survey be performed?",
+                options: [
+                    "A. Simultaneously with the Primary Survey",
+                    "B. Before addressing catastrophic hemorrhage",
+                    "C. Once the primary survey is completed, resuscitative efforts are underway, and normalization of vital signs has been demonstrated",
+                    "D. Only in the operating room"
+                ],
+                answer: 2
+            },
+            {
+                n: 20,
+                question: "What is the purpose of the Trauma Tertiary Survey?",
+                options: [
+                    "A. To initiate immediate surgical intervention",
+                    "B. A comprehensive re-examination process to avoid or reduce the risk of missed injuries",
+                    "C. To perform the initial triage in the pre-hospital setting",
+                    "D. To administer the first dose of antibiotics"
+                ],
+                answer: 1
+            }
+        ];
+
+        function loadQuiz() {
+            const container = document.getElementById('quiz-container');
+            let output = '';
+
+            quizData.forEach((q, qIndex) => {
+                output += `<div class="question-card">
+                    <div class="question-title">${q.n}. ${q.question}</div>
+                    <div class="options">`;
+                
+                q.options.forEach((opt, optIndex) => {
+                    output += `<label><input type="radio" name="q${qIndex}" value="${optIndex}"> ${opt}</label>`;
+                });
+
+                output += `</div><div class="feedback" id="feedback-${qIndex}"></div></div>`;
+            });
+
+            container.innerHTML = output;
+        }
+
+        function gradeQuiz() {
+            let score = 0;
+
+            quizData.forEach((q, qIndex) => {
+                const selected = document.querySelector(`input[name="q${qIndex}"]:checked`);
+                const feedbackEl = document.getElementById(`feedback-${qIndex}`);
+
+                if (selected) {
+                    const userAnswer = parseInt(selected.value);
+                    if (userAnswer === q.answer) {
+                        score++;
+                        feedbackEl.textContent = "Correct!";
+                        feedbackEl.className = "feedback correct";
+                    } else {
+                        feedbackEl.textContent = `Incorrect. Correct answer: ${q.options[q.answer]}`;
+                        feedbackEl.className = "feedback incorrect";
+                    }
+                } else {
+                    feedbackEl.textContent = `Unanswered. Correct answer: ${q.options[q.answer]}`;
+                    feedbackEl.className = "feedback incorrect";
+                }
+            });
+
+            document.getElementById('score-display').textContent = `Your Score: ${score} / ${quizData.length}`;
+        }
+
+        window.onload = loadQuiz;
+    </script>
+</body>
+</html>
