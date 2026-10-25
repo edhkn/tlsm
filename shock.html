@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shock & Resuscitation Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .question-card {
+            background: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .question-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .options label {
+            display: block;
+            margin: 8px 0;
+            cursor: pointer;
+        }
+        .feedback {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .correct {
+            color: #27ae60;
+        }
+        .incorrect {
+            color: #c0392b;
+        }
+        #submit-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #2980b9;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #submit-btn:hover {
+            background-color: #2471a3;
+        }
+        #score-display {
+            text-align: center;
+            font-size: 20px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Shock & Resuscitation Quiz</h1>
+    
+    <form id="quiz-form">
+        <div id="quiz-container"></div>
+        <button type="button" id="submit-btn" onclick="gradeQuiz()">Submit Answers</button>
+    </form>
+
+    <div id="score-display"></div>
+
+    <script>
+        const quizData = [
+            {
+                n: 1,
+                question: "How is shock defined in the context of trauma?",
+                options: [
+                    "A. A state of normal cellular function with reduced heart rate",
+                    "B. A state of circulatory inadequacy causing tissue hypoperfusion resulting in cellular dysfunction and death",
+                    "C. A temporary drop in blood pressure due to psychological distress",
+                    "D. An increase in intravascular circulating volume causing systemic vasodilation"
+                ],
+                answer: 1 // Index of option B (0-based)
+            },
+            {
+                n: 2,
+                question: "Which of the following is an example of obstructive shock?",
+                options: [
+                    "A. Exsanguinating hemorrhage",
+                    "B. Severe myocardial contusion",
+                    "C. Blunt thoracic injury with tension pneumothorax",
+                    "D. High spinal cord injury"
+                ],
+                answer: 2
+            },
+            {
+                n: 3,
+                question: "Neurogenic shock resulting from a high spinal cord injury is classified as which type of shock?",
+                options: [
+                    "A. Hypovolemic",
+                    "B. Cardiogenic",
+                    "C. Obstructive",
+                    "D. Distributive"
+                ],
+                answer: 3
+            },
+            {
+                n: 4,
+                question: "According to the pathophysiology of hemorrhagic shock, what does reduced tissue perfusion directly lead to?",
+                options: [
+                    "A. Increased venous return",
+                    "B. Sympathetic release of catecholamine",
+                    "C. Anaerobic metabolism",
+                    "D. Tachycardia"
+                ],
+                answer: 2
+            },
+            {
+                n: 5,
+                question: "In the circulatory assessment mnemonic CCTVR, what does the \"V\" stand for?",
+                options: [
+                    "A. Veins",
+                    "B. Volume (pulse)",
+                    "C. Velocity",
+                    "D. Vasoconstriction"
+                ],
+                answer: 1
+            },
+            {
+                n: 6,
+                question: "The presence of a palpable femoral artery pulse approximates a systolic blood pressure (SBP) of at least:",
+                options: [
+                    "A. > 60 mmHg",
+                    "B. > 70 mmHg",
+                    "C. > 80 mmHg",
+                    "D. > 90 mmHg"
+                ],
+                answer: 1
+            },
+            {
+                n: 7,
+                question: "A palpable dorsalis pedis artery pulse indicates an approximate systolic blood pressure (SBP) of:",
+                options: [
+                    "A. > 60 mmHg",
+                    "B. > 70 mmHg",
+                    "C. > 80 mmHg",
+                    "D. > 90 mmHg"
+                ],
+                answer: 3
+            },
+            {
+                n: 8,
+                question: "In the \"SCALPER\" mnemonic for potential sources of hemorrhage, what does the \"R\" represent?",
+                options: [
+                    "A. Ribs",
+                    "B. Radius",
+                    "C. Retroperitoneum",
+                    "D. Rectum"
+                ],
+                answer: 2
+            },
+            {
+                n: 9,
+                question: "Which of the following interventions is appropriate for controlling INTERNAL bleeding?",
+                options: [
+                    "A. Arterial Tourniquet",
+                    "B. Direct compression",
+                    "C. Hemostatic suture techniques",
+                    "D. Damage Control Surgery"
+                ],
+                answer: 3
+            },
+            {
+                n: 10,
+                question: "What is the central mechanism of Acute Traumatic Coagulopathy (ATC)?",
+                options: [
+                    "A. Endothelial activation of Protein-C",
+                    "B. Overproduction of platelets",
+                    "C. Exogenous administration of heparin",
+                    "D. Increased clotting factor activity"
+                ],
+                answer: 0
+            },
+            {
+                n: 11,
+                question: "Which of the following is NOT one of the three core components of Damage Control Resuscitation (DCR)?",
+                options: [
+                    "A. Permissive Hypotension",
+                    "B. Fixed-ratio crystalloid fluid overload",
+                    "C. Hemostatic Resuscitation",
+                    "D. Immediate Control of Hemorrhage"
+                ],
+                answer: 1
+            },
+            {
+                n: 12,
+                question: "What is the targeted blood pressure for Permissive Hypotension (Balance Resuscitation) in patients without severe traumatic brain injury?",
+                options: [
+                    "A. SBP of 120-130 mmHg",
+                    "B. MAP of 70-80 mmHg",
+                    "C. SBP of 80-90 mmHg or MAP 50-60 mmHg",
+                    "D. SBP of 60-70 mmHg"
+                ],
+                answer: 2
+            },
+            {
+                n: 13,
+                question: "Hemostatic Resuscitation involves:",
+                options: [
+                    "A. Using hypotonic solutions to maintain blood pressure",
+                    "B. Deliberately dropping the heart rate to stop bleeding",
+                    "C. Using blood components and pharmacological adjuncts to combat coagulopathy and attain hemostasis",
+                    "D. Administering large volumes of normal saline rapidly"
+                ],
+                answer: 2
+            },
+            {
+                n: 14,
+                question: "What differentiates a Targeted Blood Transfusion protocol from a Massive Blood Transfusion protocol?",
+                options: [
+                    "A. Targeted Transfusion uses a fixed minimum aspect ratio",
+                    "B. Targeted Transfusion has no fixed ratio and requires point-of-care guidance",
+                    "C. Targeted Transfusion only administers platelets",
+                    "D. Targeted Transfusion requires a minimum of 4 units of PRBCs upfront"
+                ],
+                answer: 1
+            },
+            {
+                n: 15,
+                question: "Which criterion defines massive bleeding that warrants protocol activation?",
+                options: [
+                    "A. Loss of 10% of blood volume in 3 hours",
+                    "B. Active ongoing bleeding at a rate of 50ml/min with stable vital signs",
+                    "C. Loss of 50% of blood volume within 3 hours",
+                    "D. Loss of total blood volume in 48 hours"
+                ],
+                answer: 2
+            },
+            {
+                n: 16,
+                question: "What is the recommended dosing regimen for early use of Tranexamic Acid (TXA) as a pharmacological adjunct?",
+                options: [
+                    "A. 1g over 10 minutes, followed by 1g over 8 hours",
+                    "B. 2g bolus over 5 minutes",
+                    "C. 500mg over 30 minutes, followed by 500mg over 24 hours",
+                    "D. 1g over 1 hour"
+                ],
+                answer: 0
+            },
+            {
+                n: 17,
+                question: "What is the pharmacological reversal agent for Dabigatran?",
+                options: [
+                    "A. Vitamin K",
+                    "B. Prothrombin Complex Concentrate",
+                    "C. Calcium chloride",
+                    "D. Idarucizumab"
+                ],
+                answer: 3
+            },
+            {
+                n: 18,
+                question: "What is a primary cause of acute hypocalcemia during a massive transfusion?",
+                options: [
+                    "A. Hyperventilation during resuscitation",
+                    "B. The action of calcium chelators used as preservatives in transfused blood",
+                    "C. Enhanced renal excretion of calcium",
+                    "D. Inadequate dietary calcium prior to the trauma"
+                ],
+                answer: 1
+            },
+            {
+                n: 19,
+                question: "What physiological complication does hypothermia directly cause during shock and resuscitation?",
+                options: [
+                    "A. Increased platelet function",
+                    "B. Decreased platelet function and fibrinolysis",
+                    "C. Increased enzyme activity",
+                    "D. Enhanced clotting factor generation"
+                ],
+                answer: 1
+            },
+            {
+                n: 20,
+                question: "What causes acidosis in a trauma patient presenting with shock?",
+                options: [
+                    "A. Dilutional effects of massive fluid infusion",
+                    "B. Cold intravenous solutions",
+                    "C. Inadequate tissue perfusion resulting in the accumulation of anaerobic by-products (lactic acid)",
+                    "D. Systemic inflammatory response causing auto-anticoagulation"
+                ],
+                answer: 2
+            }
+        ];
+
+        function loadQuiz() {
+            const container = document.getElementById('quiz-container');
+            let output = '';
+
+            quizData.forEach((q, qIndex) => {
+                output += `<div class="question-card">
+                    <div class="question-title">${q.n}. ${q.question}</div>
+                    <div class="options">`;
+                
+                q.options.forEach((opt, optIndex) => {
+                    output += `<label><input type="radio" name="q${qIndex}" value="${optIndex}"> ${opt}</label>`;
+                });
+
+                output += `</div><div class="feedback" id="feedback-${qIndex}"></div></div>`;
+            });
+
+            container.innerHTML = output;
+        }
+
+        function gradeQuiz() {
+            let score = 0;
+
+            quizData.forEach((q, qIndex) => {
+                const selected = document.querySelector(`input[name="q${qIndex}"]:checked`);
+                const feedbackEl = document.getElementById(`feedback-${qIndex}`);
+
+                if (selected) {
+                    const userAnswer = parseInt(selected.value);
+                    if (userAnswer === q.answer) {
+                        score++;
+                        feedbackEl.textContent = "Correct!";
+                        feedbackEl.className = "feedback correct";
+                    } else {
+                        feedbackEl.textContent = `Incorrect. Correct answer: ${q.options[q.answer]}`;
+                        feedbackEl.className = "feedback incorrect";
+                    }
+                } else {
+                    feedbackEl.textContent = `Unanswered. Correct answer: ${q.options[q.answer]}`;
+                    feedbackEl.className = "feedback incorrect";
+                }
+            });
+
+            document.getElementById('score-display').textContent = `Your Score: ${score} / ${quizData.length}`;
+        }
+
+        window.onload = loadQuiz;
+    </script>
+</body>
+</html>
