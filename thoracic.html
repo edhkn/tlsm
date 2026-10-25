@@ -85,13 +85,33 @@
         
         .btn-host { background: linear-gradient(135deg, #f12711, #f5af19); box-shadow: 0 8px 20px rgba(241, 39, 17, 0.4); }
 
-        /* Lobby */
+        /* Lobby & QR Code Section */
         .pin-pill {
             display: inline-block; background: linear-gradient(135deg, #ffd700, #ffaa00); color: #000;
             font-size: 2.8rem; font-weight: 900; padding: 12px 35px;
             border-radius: 50px; margin: 15px 0; letter-spacing: 4px;
             box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
         }
+
+        .qr-card-container {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px; padding: 22px; margin: 20px auto; max-width: 380px;
+        }
+        .qr-image-wrapper {
+            background: #ffffff; padding: 12px; border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+        .qr-image-wrapper img {
+            display: block; width: 190px; height: 190px; border-radius: 6px;
+        }
+        .qr-scan-label {
+            margin-top: 14px; font-size: 1.05rem; font-weight: 800; color: #ffd700;
+        }
+        .qr-url-link {
+            font-size: 0.85rem; color: #d1b8f7; margin-top: 5px; word-break: break-all;
+        }
+
         .roster-header { font-size: 1.2rem; margin: 20px 0 15px; font-weight: 700; color: #e5d4fc; }
         .player-roster {
             display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
@@ -257,6 +277,15 @@
             <div class="pin-pill" id="lobby-pin-display">------</div>
             <p id="lobby-role-msg">Waiting for all players to assemble...</p>
 
+            <!-- QR CODE SECTION (SHOWN TO HOST) -->
+            <div id="host-qr-section" class="qr-card-container" style="display: none;">
+                <div class="qr-image-wrapper">
+                    <img id="host-qr-image" src="" alt="Scan to Join">
+                </div>
+                <div class="qr-scan-label">📷 Scan to Join Instantly</div>
+                <div class="qr-url-link">https://edhkn.github.io/tlsm/thoracic.html</div>
+            </div>
+
             <div id="player-waiting-spinner" style="display: none; padding: 15px 0;">
                 <div class="pulse-loader"></div>
                 <h3 style="color: #00e096; font-size: 1.4rem;">You are in!</h3>
@@ -351,6 +380,16 @@
     </div>
 
     <script>
+        // Auto-fill PIN if scanned via QR code query parameter
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const pinParam = urlParams.get('pin');
+            if (pinParam) {
+                const pinInput = document.getElementById('pin-input');
+                if (pinInput) pinInput.value = pinParam.trim().toUpperCase();
+            }
+        });
+
         // =================================================================
         // 1. KAHOOT SOUND ENGINE (Web Audio API)
         // =================================================================
@@ -408,7 +447,6 @@
             },
             startPreviewTone() {
                 this.init(); this.stopMusic(); this.mode = 'preview'; this.step = 0;
-                // Soft anticipation rhythm during the 5s read phase
                 this.timer = setInterval(() => {
                     this.playTone(440, 'triangle', 0.08, 0.12);
                     this.step++;
@@ -416,7 +454,6 @@
             },
             startGameMusic() {
                 this.init(); this.stopMusic(); this.mode = 'game'; this.step = 0;
-                // Faster, tense ticking metronome once options appear
                 this.timer = setInterval(() => {
                     this.playTone((this.step % 16 < 8) ? 146.83 : 130.81, 'triangle', 0.12, 0.15);
                     this.playTone((this.step % 2 === 0) ? 1800 : 1200, 'sine', 0.04, 0.07);
@@ -425,7 +462,6 @@
             },
             playPopSfx() {
                 this.init();
-                // Pop chime when answers appear
                 this.playTone(523.25, 'sine', 0.1, 0.3);
                 setTimeout(() => this.playTone(659.25, 'sine', 0.1, 0.3), 60);
                 setTimeout(() => this.playTone(783.99, 'triangle', 0.18, 0.35), 120);
@@ -710,6 +746,7 @@
             showScreen('lobby-screen');
             document.getElementById('lobby-pin-display').innerText = roomPin;
             document.getElementById('player-waiting-spinner').style.display = "block";
+            document.getElementById('host-qr-section').style.display = "none";
             document.getElementById('lobby-role-msg').innerText = "Waiting for host to start the game...";
 
             if (db) {
@@ -728,12 +765,18 @@
             document.getElementById('score-hud').style.display = "none";
             document.getElementById('answers-counter').style.display = "inline-block";
 
+            // Generate QR code pointing to https://edhkn.github.io/tlsm/thoracic.html (auto-fills pin)
+            const targetUrl = `https://edhkn.github.io/tlsm/thoracic.html?pin=${encodeURIComponent(roomPin)}`;
+            const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(targetUrl)}`;
+            document.getElementById('host-qr-image').src = qrApiUrl;
+            document.getElementById('host-qr-section').style.display = "flex";
+
             SoundTrack.startLobbyMusic();
             showScreen('lobby-screen');
             document.getElementById('lobby-pin-display').innerText = roomPin;
             document.getElementById('host-start-btn').style.display = "inline-block";
             document.getElementById('player-waiting-spinner').style.display = "none";
-            document.getElementById('lobby-role-msg').innerText = "Share this PIN with your audience (100+ players):";
+            document.getElementById('lobby-role-msg').innerText = "Scan the QR code or enter the PIN to join:";
 
             if (db) {
                 db.ref(`rooms/${roomPin}`).set({
@@ -841,13 +884,12 @@
             phaseBadge.style.background = "#ffd700";
             phaseBadge.style.color = "#1a0b2e";
             previewBox.style.display = "block";
-            container.style.display = "none"; // Hide options initially
+            container.style.display = "none";
 
             if (isHost) {
                 document.getElementById('answers-counter').innerText = `Answers: 0/${totalPlayerCount}`;
             }
 
-            // Populate options while hidden so they are ready to pop up
             container.innerHTML = '';
             container.classList.remove('disabled-grid');
 
@@ -895,7 +937,6 @@
             const previewBox = document.getElementById('preview-box');
             const container = document.getElementById('options-container');
 
-            // Switch UI & triggers pop-in animation
             previewBox.style.display = "none";
             container.style.display = "grid";
             timerEl.classList.remove('timer-preview');
