@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TLSM: Geriatric Trauma — Live Arena</title>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&display=swap');
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Montserrat', sans-serif; }
+        
+        body { 
+            background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #1f0b40);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #fff; 
+            min-height: 100vh; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            padding: 90px 16px 80px 16px;
+            overflow-x: hidden; 
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* --- NAVIGASI UTAMA TERAPUNG --- */
+        nav {
+            position: fixed; top: 20px; left: 20px; z-index: 1000;
+            background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            padding: 8px 20px; border-radius: 50px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: 0.3s;
+        }
+        nav:hover { background: rgba(255,255,255,0.2); }
+        .logo-group { display: flex; align-items: center; text-decoration: none; gap: 12px; }
+        .dept-logo { width: 38px; height: 38px; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.4); }
+        .logo-text { color: #fff; font-size: 0.95rem; font-weight: 900; display: flex; flex-direction: column; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .logo-text span { font-size: 0.65rem; color: #00e096; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Floating Audio Control */
+        .audio-toggle {
+            position: fixed; top: 20px; right: 20px; z-index: 999;
+            background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #fff; font-size: 0.95rem; font-weight: 800; padding: 14px 22px;
+            border-radius: 50px; cursor: pointer; 
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: 0.2s;
+        }
+        .audio-toggle:hover { background: rgba(255,255,255,0.25); transform: translateY(-2px); }
+
+        /* Screens */
+        .screen { display: none; width: 100%; max-width: 900px; text-align: center; }
+        .active { display: block; animation: slideUp 0.4s ease forwards; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Glassmorphism Cards */
+        .card {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 45px 35px; border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        }
+
+        .logo { font-size: 3.2rem; font-weight: 900; letter-spacing: -2px; margin-bottom: 6px; }
+        .subtitle { font-size: 1.15rem; color: #bca0e6; font-weight: 600; margin-bottom: 25px; letter-spacing: 1px; text-transform: uppercase; }
+
+        .input-group { margin: 18px 0; text-align: left; }
+        .input-group label { display: block; font-size: 0.85rem; font-weight: 800; margin-bottom: 8px; color: #e5d4fc; text-transform: uppercase; }
+        .text-input {
+            width: 100%; padding: 18px; font-size: 1.2rem; font-weight: 700; color: #fff;
+            background: rgba(0, 0, 0, 0.25);
+            border: 2px solid rgba(255, 255, 255, 0.15); border-radius: 12px; outline: none;
+            transition: 0.2s;
+        }
+        .text-input:focus { border-color: #00e096; background: rgba(0, 0, 0, 0.45); }
+
+        .btn-row { display: flex; gap: 15px; margin-top: 25px; }
+        .btn-main {
+            flex: 1; color: #fff; border: none;
+            padding: 18px 24px; font-size: 1.2rem; font-weight: 800; text-transform: uppercase;
+            border-radius: 12px; cursor: pointer; 
+            background: linear-gradient(135deg, #00b09b, #96c93d);
+            box-shadow: 0 8px 20px rgba(0, 176, 155, 0.4);
+            transition: 0.2s;
+        }
+        .btn-main:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(0, 176, 155, 0.6); }
+        .btn-main:active { transform: translateY(2px); }
+        
+        .btn-host { background: linear-gradient(135deg, #f12711, #f5af19); box-shadow: 0 8px 20px rgba(241, 39, 17, 0.4); }
+
+        /* Lobby & QR Code Section */
+        .pin-pill {
+            display: inline-block; background: linear-gradient(135deg, #ffd700, #ffaa00); color: #000;
+            font-size: 2.8rem; font-weight: 900; padding: 12px 35px;
+            border-radius: 50px; margin: 15px 0; letter-spacing: 4px;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+        }
+
+        .qr-card-container {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px; padding: 22px; margin: 20px auto; max-width: 380px;
+        }
+        .qr-image-wrapper {
+            background: #ffffff; padding: 12px; border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+        .qr-image-wrapper img {
+            display: block; width: 190px; height: 190px; border-radius: 6px;
+        }
+        .qr-scan-label {
+            margin-top: 14px; font-size: 1.05rem; font-weight: 800; color: #ffd700;
+        }
+        .qr-url-link {
+            font-size: 0.85rem; color: #d1b8f7; margin-top: 5px; word-break: break-all;
+        }
+
+        .roster-header { font-size: 1.2rem; margin: 20px 0 15px; font-weight: 700; color: #e5d4fc; }
+        .player-roster {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+            max-height: 220px; overflow-y: auto; padding: 15px;
+            background: rgba(0,0,0,0.25); border-radius: 16px; min-height: 90px;
+        }
+        .player-chip {
+            background: #fff; color: #1a0b2e; font-weight: 800; font-size: 0.95rem;
+            padding: 8px 18px; border-radius: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+        .pulse-loader {
+            display: inline-block; width: 60px; height: 60px;
+            border: 5px solid rgba(255,255,255,0.1); border-top-color: #00e096;
+            border-radius: 50%; animation: spin 1s infinite linear; margin: 20px auto;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* HUD & Question */
+        .status-bar {
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);
+            padding: 14px 20px; border-radius: 14px; font-size: 1.05rem; font-weight: 800; margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .answers-counter-badge {
+            background: #00e096; color: #083b27; padding: 4px 14px; border-radius: 20px; font-size: 0.9rem; font-weight: 900;
+        }
+        .phase-badge {
+            background: #ffd700; color: #1a0b2e; padding: 4px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 900;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .points-decay-badge {
+            background: linear-gradient(135deg, #ff007f, #7928ca); color: #fff; padding: 4px 14px;
+            border-radius: 20px; font-size: 0.85rem; font-weight: 900;
+            box-shadow: 0 0 12px rgba(255, 0, 127, 0.5);
+            transition: all 0.1s linear;
+        }
+
+        .question-box {
+            background: #ffffff; color: #1a0b2e; position: relative;
+            padding: 45px 25px 30px; border-radius: 20px; min-height: 170px;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+        .timer-badge {
+            position: absolute; top: -28px; left: 50%; transform: translateX(-50%);
+            background: linear-gradient(135deg, #ff00cc, #333399); color: #fff; 
+            width: 62px; height: 62px; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.6rem; font-weight: 900; border: 4px solid #1f0b40;
+            box-shadow: 0 0 20px rgba(255, 0, 204, 0.6);
+            transition: background 0.3s ease;
+        }
+        .timer-preview {
+            background: linear-gradient(135deg, #f9d423, #ff4e50);
+            box-shadow: 0 0 20px rgba(249, 212, 35, 0.7);
+        }
+        #question-text { font-size: 1.45rem; font-weight: 800; line-height: 1.4; }
+
+        /* Preview Banner */
+        #preview-box {
+            padding: 30px 20px; background: rgba(255, 255, 255, 0.05); border-radius: 16px;
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            margin-bottom: 10px;
+        }
+        .preview-text {
+            font-size: 1.35rem; font-weight: 800; color: #ffd700;
+            animation: pulseText 1s infinite alternate;
+        }
+        @keyframes pulseText { from { opacity: 0.7; transform: scale(0.98); } to { opacity: 1; transform: scale(1.02); } }
+
+        /* 3D Option Grid */
+        .options-grid { 
+            display: none; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 15px; 
+            animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        .option-item {
+            display: flex; align-items: center; padding: 22px; font-size: 1.15rem;
+            font-weight: 800; color: #fff; border: none; border-radius: 14px;
+            text-align: left; transition: 0.2s;
+        }
+        .option-item .shape { font-size: 2rem; margin-right: 15px; flex-shrink: 0; }
+        
+        .btn-red { background: linear-gradient(135deg, #ff416c, #ff4b2b); box-shadow: 0 6px 0 #b3213a; }
+        .btn-blue { background: linear-gradient(135deg, #00c6ff, #0072ff); box-shadow: 0 6px 0 #0052b3; }
+        .btn-yellow { background: linear-gradient(135deg, #f9d423, #ff4e50); box-shadow: 0 6px 0 #ba3918; }
+        .btn-green { background: linear-gradient(135deg, #11998e, #38ef7d); box-shadow: 0 6px 0 #0b6b5a; }
+
+        button.option-item { cursor: pointer; }
+        button.option-item:hover { transform: translateY(-3px); }
+        button.option-item:active { transform: translateY(3px); box-shadow: none; }
+        
+        div.option-item { cursor: default; }
+        .disabled-grid { pointer-events: none; opacity: 0.6; }
+
+        #player-submitted-banner {
+            display: none; background: rgba(0, 224, 150, 0.2); border: 2px solid #00e096;
+            color: #00e096; font-size: 1.3rem; font-weight: 800; padding: 14px;
+            border-radius: 12px; margin-top: 20px;
+        }
+
+        /* Feedback Screen */
+        .feedback-banner { padding: 50px 25px; border-radius: 20px; color: #fff; }
+        .correct-bg { background: linear-gradient(135deg, #11998e, #38ef7d); }
+        .wrong-bg { background: linear-gradient(135deg, #ff416c, #ff4b2b); }
+        .host-reveal-bg { background: linear-gradient(135deg, #302b63, #46178f); border: 2px solid #00e096; }
+
+        /* Podium */
+        .podium-wrap { display: flex; justify-content: center; align-items: flex-end; gap: 15px; margin: 30px 0 20px; height: 210px; }
+        .podium-col {
+            width: 30%; border-radius: 12px 12px 0 0; display: flex;
+            flex-direction: column; justify-content: flex-end; padding: 15px 8px;
+            text-align: center; color: #fff; font-weight: 900; position: relative;
+        }
+        .pod-1 { height: 100%; background: linear-gradient(to top, #f9d423, #ff4e50); }
+        .pod-2 { height: 75%; background: linear-gradient(to top, #bdc3c7, #2c3e50); }
+        .pod-3 { height: 55%; background: linear-gradient(to top, #e65c00, #F9D423); }
+        .medal { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); font-size: 2.2rem; }
+
+        .winner-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; margin-top: 15px; }
+        .winner-table th { background: rgba(255,255,255,0.1); color: #fff; padding: 12px; font-size: 0.95rem; text-align: left; }
+        .winner-table td { padding: 12px; background: rgba(255,255,255,0.06); text-align: left; font-weight: 700; color: #fff; }
+        .my-row td { background: rgba(0,224,150,0.2) !important; color: #00e096; font-weight: 900; }
+
+        /* --- KAKI HALAMAN (FOOTER) --- */
+        footer {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: rgba(0, 0, 0, 0.45); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 12px 20px; z-index: 999;
+        }
+        .footer-container { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; }
+        .footer-logos { display: flex; align-items: center; gap: 12px; }
+        .footer-logos img { height: 32px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+        .logo-divider { width: 1px; height: 28px; background: rgba(255, 255, 255, 0.2); }
+        
+        .footer-status { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 800; color: #e5d4fc; }
+        .pulse-dot { width: 10px; height: 10px; background: #00e096; border-radius: 50%; box-shadow: 0 0 12px #00e096; animation: pulseDot 1s infinite alternate; }
+        @keyframes pulseDot { from { opacity: 0.4; transform: scale(0.8); } to { opacity: 1; transform: scale(1.2); } }
+        
+        .footer-copyright { font-size: 0.85rem; font-weight: 600; color: rgba(255, 255, 255, 0.6); }
+        .footer-copyright span { color: #00e096; font-weight: 800; }
+
+        @media (max-width: 768px) {
+            nav { top: 10px; left: 10px; padding: 6px 16px; }
+            .dept-logo { width: 30px; height: 30px; }
+            .logo-text { font-size: 0.8rem; }
+            .logo-text span { font-size: 0.55rem; }
+            
+            .audio-toggle { top: 10px; right: 10px; padding: 8px 16px; font-size: 0.8rem; }
+
+            .options-grid { grid-template-columns: 1fr; }
+            .logo { font-size: 2.3rem; }
+            #question-text { font-size: 1.2rem; }
+            .btn-row { flex-direction: column; }
+            
+            .footer-container { flex-direction: column; gap: 10px; }
+            .footer-copyright { margin-top: 4px; text-align: center; }
+            body { padding-bottom: 130px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigasi Utama Terapung -->
+    <nav>
+        <a href="#" class="logo-group">
+            <img src="https://lh3.googleusercontent.com/d/1O2Nj1Dr4U6wo7ISjdkDRukPYwZUkOOuJ" alt="Logo Jabatan" class="dept-logo">
+            <div class="logo-text">
+                Hospital Kuala Nerang
+                <span>Jabatan Kecemasan & Trauma</span>
+            </div>
+        </a>
+    </nav>
+
+    <button class="audio-toggle" id="audio-btn" onclick="toggleAudio()">🔊 Sound ON</button>
+
+    <!-- SCREEN 1: LOGIN -->
+    <div id="login-screen" class="screen active">
+        <div class="card">
+            <div class="logo">TLSM ARENA</div>
+            <div class="subtitle">Geriatric Trauma • Live Edition</div>
+            
+            <div class="input-group">
+                <label>Room PIN / Quiz ID</label>
+                <input type="text" id="pin-input" class="text-input" placeholder="e.g. GERIATRIC26" maxlength="12">
+            </div>
+            
+            <div class="input-group" id="nick-group">
+                <label>Player Nickname</label>
+                <input type="text" id="name-input" class="text-input" placeholder="Enter your name" maxlength="18">
+            </div>
+
+            <div class="btn-row">
+                <button class="btn-main" onclick="joinAsPlayer()">Join as Player</button>
+                <button class="btn-main btn-host" onclick="startAsHost()">Host on Main Screen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCREEN 2: LOBBY -->
+    <div id="lobby-screen" class="screen">
+        <div class="card">
+            <div class="subtitle">GAME PIN</div>
+            <div class="pin-pill" id="lobby-pin-display">------</div>
+            <p id="lobby-role-msg">Waiting for all players to assemble...</p>
+
+            <!-- QR CODE SECTION (SHOWN TO HOST) -->
+            <div id="host-qr-section" class="qr-card-container" style="display: none;">
+                <div class="qr-image-wrapper">
+                    <img id="host-qr-image" src="" alt="Scan to Join">
+                </div>
+                <div class="qr-scan-label">📷 Scan to Join Instantly</div>
+                <div class="qr-url-link" id="qr-url-text">https://edhkn.github.io/tlsm/geriatric.html</div>
+            </div>
+
+            <div id="player-waiting-spinner" style="display: none; padding: 15px 0;">
+                <div class="pulse-loader"></div>
+                <h3 style="color: #00e096; font-size: 1.4rem;">You are in!</h3>
+                <p style="color: #bca0e6; margin-top: 6px;">Waiting for host to start the quiz...</p>
+            </div>
+
+            <div class="roster-header">Connected Players: <span id="roster-count" style="color: #00e096;">0</span></div>
+            <div class="player-roster" id="player-roster"></div>
+
+            <button class="btn-main" id="host-start-btn" onclick="hostLaunchesQuiz()" style="display: none; margin-top: 25px; width: 100%;">
+                🚀 Start Quiz For Everyone
+            </button>
+        </div>
+    </div>
+
+    <!-- SCREEN 3: GAMEPLAY -->
+    <div id="game-screen" class="screen">
+        <div class="status-bar">
+            <span id="player-hud-name" style="color: #00e096;">Player</span>
+            <span id="round-phase-indicator" class="phase-badge">Read Question</span>
+            <span id="live-points-badge" class="points-decay-badge" style="display: none;">⚡ 1,000 pts</span>
+            <span id="answers-counter" class="answers-counter-badge" style="display: none;">Answers: 0/0</span>
+            <span id="q-counter" style="background: rgba(255,255,255,0.2); padding: 4px 15px; border-radius: 20px;">Q: 1/20</span>
+            <span id="score-hud">Score: 0</span>
+        </div>
+        <div class="question-box">
+            <div class="timer-badge timer-preview" id="timer">5</div>
+            <div id="question-text">Loading question...</div>
+        </div>
+
+        <!-- 5-Second Question Preview Notice -->
+        <div id="preview-box">
+            <div class="preview-text">📖 Read the question carefully... Options appearing shortly!</div>
+        </div>
+
+        <!-- 20-Second Options Grid -->
+        <div class="options-grid" id="options-container"></div>
+        <div id="player-submitted-banner">Answer Submitted! 🔒 Waiting for other players...</div>
+    </div>
+
+    <!-- SCREEN 4: ROUND FEEDBACK & REVEAL -->
+    <div id="feedback-screen" class="screen">
+        <div class="card feedback-banner" id="feedback-banner">
+            <h1 id="feedback-title" style="font-size: 3rem; margin-bottom: 12px;">Round Over</h1>
+            <div id="correct-answer-text" style="font-size: 1.25rem; background: rgba(0,0,0,0.35); padding: 14px 20px; border-radius: 12px; display: inline-block; font-weight: 700;"></div>
+            <br>
+            <h2 id="feedback-points" style="font-size: 2.2rem; margin-top: 18px;">+0 pts</h2>
+
+            <div id="host-feedback-controls" style="display: none; margin-top: 25px;">
+                <p id="auto-advance-msg" style="color: #ffd700; margin-bottom: 10px; font-weight: 800;">Auto-advancing in 5s...</p>
+                <button class="btn-main" onclick="hostNextQuestion()" style="width: 100%; max-width: 350px;">Next Question ▶</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCREEN 5: FINAL PODIUM -->
+    <div id="end-screen" class="screen">
+        <div class="card" style="padding: 35px 20px;">
+            <div class="logo" style="font-size: 2.8rem;">FINAL PODIUM</div>
+            <div class="subtitle" id="winner-room-tag">TLSM: Geriatric Trauma</div>
+
+            <div class="podium-wrap">
+                <div class="podium-col pod-2">
+                    <div class="medal">🥈</div>
+                    <div id="p2-name">-</div>
+                    <div id="p2-score" style="font-size: 0.9rem;">0 pts</div>
+                </div>
+                <div class="podium-col pod-1">
+                    <div class="medal">🥇</div>
+                    <div id="p1-name" style="font-size: 1.3rem;">-</div>
+                    <div id="p1-score" style="font-size: 1rem;">0 pts</div>
+                </div>
+                <div class="podium-col pod-3">
+                    <div class="medal">🥉</div>
+                    <div id="p3-name">-</div>
+                    <div id="p3-score" style="font-size: 0.9rem;">0 pts</div>
+                </div>
+            </div>
+
+            <table class="winner-table">
+                <thead>
+                    <tr>
+                        <th style="width: 15%;">Rank</th>
+                        <th>Player Name</th>
+                        <th style="width: 25%;">Score</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboard-tbody"></tbody>
+            </table>
+
+            <button class="btn-main" onclick="location.reload()" style="margin-top: 30px; width: 100%;">Exit to Home</button>
+        </div>
+    </div>
+
+    <!-- Kaki Halaman (Footer Moden) -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-logos">
+                <img src="https://lh3.googleusercontent.com/d/1O2Nj1Dr4U6wo7ISjdkDRukPYwZUkOOuJ" alt="HKN Logo">
+                <div class="logo-divider"></div>
+                <img src="https://lh3.googleusercontent.com/d/1LdMRx-PF49CWOcrjthClGLJg-yQoJ2mt" alt="MOH Logo">
+            </div>
+
+            <div class="footer-status">
+                <span class="pulse-dot"></span>
+                <span>EDHKN PORTAL Ver 2.0</span>
+            </div>
+
+            <p class="footer-copyright">© 2026 <span>Yassin Razak</span> | All Rights Reserved</p>
+        </div>
+    </footer>
+
+    <script>
+        // Auto-fill PIN if scanned via QR code query parameter
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const pinParam = urlParams.get('pin');
+            if (pinParam) {
+                const pinInput = document.getElementById('pin-input');
+                if (pinInput) pinInput.value = pinParam.trim().toUpperCase();
+            }
+        });
+
+        // =================================================================
+        // 1. KAHOOT SOUND ENGINE (Web Audio API)
+        // =================================================================
+        const SoundTrack = {
+            ctx: null, muted: false, timer: null, step: 0, mode: 'none',
+            init() {
+                if (!this.ctx) {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioCtx();
+                }
+                if (this.ctx.state === 'suspended') this.ctx.resume();
+            },
+            playTone(freq, type, dur, vol, slideTo = null) {
+                if (this.muted || !this.ctx) return;
+                try {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                    if (slideTo) osc.frequency.exponentialRampToValueAtTime(slideTo, this.ctx.currentTime + dur);
+                    gain.gain.setValueAtTime(vol, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + dur);
+                    osc.connect(gain); gain.connect(this.ctx.destination);
+                    osc.start(); osc.stop(this.ctx.currentTime + dur);
+                } catch(e) {}
+            },
+            playNoise(dur, vol) {
+                if (this.muted || !this.ctx) return;
+                try {
+                    const bSize = this.ctx.sampleRate * dur;
+                    const b = this.ctx.createBuffer(1, bSize, this.ctx.sampleRate);
+                    const d = b.getChannelData(0);
+                    for (let i = 0; i < bSize; i++) d[i] = Math.random() * 2 - 1;
+                    const noise = this.ctx.createBufferSource(); noise.buffer = b;
+                    const gain = this.ctx.createGain();
+                    gain.gain.setValueAtTime(vol, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + dur);
+                    noise.connect(gain); gain.connect(this.ctx.destination);
+                    noise.start();
+                } catch(e) {}
+            },
+            startLobbyMusic() {
+                this.init(); this.stopMusic(); this.mode = 'lobby'; this.step = 0;
+                const bass = [130.81, 0, 130.81, 155.56, 0, 174.61, 196.00, 155.56];
+                const arps = [523.25, 622.25, 783.99, 932.33, 1046.50, 783.99, 622.25, 523.25];
+                this.timer = setInterval(() => {
+                    const b = bass[this.step % bass.length];
+                    if (b > 0) this.playTone(b, 'sawtooth', 0.22, 0.2);
+                    if (this.step % 2 === 1) this.playTone(arps[(this.step * 3) % arps.length], 'triangle', 0.15, 0.1);
+                    if (this.step % 4 === 0) this.playTone(80, 'sine', 0.18, 0.35, 30);
+                    else if (this.step % 4 === 2) this.playNoise(0.1, 0.15);
+                    else this.playNoise(0.04, 0.04);
+                    this.step++;
+                }, 230);
+            },
+            startPreviewTone() {
+                this.init(); this.stopMusic(); this.mode = 'preview'; this.step = 0;
+                this.timer = setInterval(() => {
+                    this.playTone(440, 'triangle', 0.08, 0.12);
+                    this.step++;
+                }, 1000);
+            },
+            startGameMusic() {
+                this.init(); this.stopMusic(); this.mode = 'game'; this.step = 0;
+                this.timer = setInterval(() => {
+                    this.playTone((this.step % 16 < 8) ? 146.83 : 130.81, 'triangle', 0.12, 0.15);
+                    this.playTone((this.step % 2 === 0) ? 1800 : 1200, 'sine', 0.04, 0.07);
+                    this.step++;
+                }, 250);
+            },
+            playPopSfx() {
+                this.init();
+                this.playTone(523.25, 'sine', 0.1, 0.3);
+                setTimeout(() => this.playTone(659.25, 'sine', 0.1, 0.3), 60);
+                setTimeout(() => this.playTone(783.99, 'triangle', 0.18, 0.35), 120);
+            },
+            startPodiumFanfare() {
+                this.init(); this.stopMusic(); this.mode = 'podium';
+                [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98].forEach((f, i) => {
+                    setTimeout(() => this.playTone(f, 'square', 0.4, 0.2), i * 180);
+                });
+            },
+            playSfx(type) {
+                this.init();
+                if (type === 'correct') {
+                    this.playTone(587.33, 'triangle', 0.15, 0.3);
+                    setTimeout(() => this.playTone(880, 'triangle', 0.35, 0.3), 120);
+                } else if (type === 'wrong') {
+                    this.playTone(220, 'sawtooth', 0.25, 0.3, 110);
+                }
+            },
+            stopMusic() { if (this.timer) { clearInterval(this.timer); this.timer = null; } }
+        };
+
+        function toggleAudio() {
+            SoundTrack.init(); SoundTrack.muted = !SoundTrack.muted;
+            document.getElementById('audio-btn').innerText = SoundTrack.muted ? "🔇 Sound OFF" : "🔊 Sound ON";
+            if (SoundTrack.muted) SoundTrack.stopMusic();
+            else { 
+                if (SoundTrack.mode === 'lobby') SoundTrack.startLobbyMusic(); 
+                if (SoundTrack.mode === 'preview') SoundTrack.startPreviewTone();
+                if (SoundTrack.mode === 'game') SoundTrack.startGameMusic(); 
+            }
+        }
+
+        // =================================================================
+        // 2. FIREBASE BACKEND SETUP
+        // =================================================================
+        const firebaseConfig = { databaseURL: "https://tlsm-1-default-rtdb.asia-southeast1.firebasedatabase.app/" };
+        let db = null;
+        try { firebase.initializeApp(firebaseConfig); db = firebase.database(); } 
+        catch (e) { console.warn("Firebase initialization error:", e); }
+
+        // =================================================================
+        // 3. 20 MCQs: TLSM GERIATRIC TRAUMA
+        // =================================================================
+        const quizData = [
+            {
+                q: "According to the demographic statistics presented, what percentage of the Malaysian population was aged over 65 years in 2019?",
+                options: [
+                    "4.2%",
+                    "6.7%",
+                    "9.5%",
+                    "12.1%"
+                ],
+                correct: 2
+            },
+            {
+                q: "What is the most common mechanism of injury among geriatric trauma patients?",
+                options: [
+                    "Motor vehicle accidents",
+                    "Pedestrian collisions",
+                    "Falls",
+                    "Burns"
+                ],
+                correct: 3
+            },
+            {
+                q: "What percentage of geriatric trauma injuries is attributed to motor vehicle accidents?",
+                options: [
+                    "12.4%",
+                    "21.5%",
+                    "35.0%",
+                    "60.7%"
+                ],
+                correct: 2
+            },
+            {
+                q: "Which physiological change of the musculoskeletal system reduces the ability of geriatric patients to withstand mechanical forces?",
+                options: [
+                    "Osteopetrosis and ligamentous laxity",
+                    "Osteomalacia and hypertrophic tendons",
+                    "Osteoporosis and stiff ligaments",
+                    "Chondrocalcinosis and joint hypermobility"
+                ],
+                correct: 3
+            },
+            {
+                q: "How is the estimated maximal heart rate calculated in an elderly patient?",
+                options: [
+                    "200 - Patient Age",
+                    "210 - (0.5 * Patient Age)",
+                    "220 - Patient Age",
+                    "240 - (2 * Patient Age)"
+                ],
+                correct: 3
+            },
+            {
+                q: "Why might an elderly trauma patient in significant shock fail to exhibit compensatory tachycardia?",
+                options: [
+                    "Aging of the cardiac electrical conduction system or beta-blocker/calcium channel blocker therapy",
+                    "Excessive circulating catecholamines suppressing SA node activity",
+                    "Increased arterial wall compliance and elevated stroke volume",
+                    "Hyperactive carotid sinus reflex caused by cervical arthritis"
+                ],
+                correct: 1
+            },
+            {
+                q: "What causes baseline systolic blood pressure to be higher in elderly individuals?",
+                options: [
+                    "Increased aortic valve area",
+                    "Reduced arterial compliance",
+                    "Decreased systemic vascular resistance",
+                    "Increased venous capacitance"
+                ],
+                correct: 2
+            },
+            {
+                q: "Which physiological respiratory alteration is characteristic of the aging respiratory system?",
+                options: [
+                    "Rigid, less compliant thoracic cage and reduction of tidal volume",
+                    "Highly compliant chest wall with increased tidal volume",
+                    "Enhanced compensatory response to acute hypercapnia",
+                    "Hypertrophy of intercostal musculature"
+                ],
+                correct: 1
+            },
+            {
+                q: "In the primary management of breathing in geriatric trauma, susceptibility to which injury significantly contributes to high mortality?",
+                options: [
+                    "Clavicle fracture",
+                    "Rib fracture",
+                    "Sternal dislocation",
+                    "Scapular fracture"
+                ],
+                correct: 2
+            },
+            {
+                q: "Which neurological alterations increase intracranial vulnerability in geriatric trauma patients?",
+                options: [
+                    "Cerebral atrophy and reduced cerebrovascular autoregulation",
+                    "Cerebral hypertrophy and decreased intracranial compliance",
+                    "Hyperactive autoregulation and dural thickening",
+                    "Expansion of functional parenchymal reserve"
+                ],
+                correct: 1
+            },
+            {
+                q: "Which anatomical factor must be considered when securing the airway of an elderly trauma patient?",
+                options: [
+                    "Microglossia",
+                    "Extremely mobile cervical spine",
+                    "Dentition, cervical arthritis, and nasopharyngeal fragility",
+                    "Hypertrophied adenoidal tissue"
+                ],
+                correct: 3
+            },
+            {
+                q: "A seemingly \"normal\" blood pressure and heart rate in an elderly trauma patient experiencing hypovolemia is primarily attributed to:",
+                options: [
+                    "Increased functional cardiac reserve",
+                    "Accelerated inotropic and chronotropic responses",
+                    "Underlying physiological changes and concurrent medications",
+                    "Massive autonomic parasympathetic discharge"
+                ],
+                correct: 3
+            },
+            {
+                q: "How does the mortality rate associated with pelvic fractures in geriatric trauma compare to younger cohorts?",
+                options: [
+                    "It is 2 times higher",
+                    "It is 4 times higher",
+                    "It is 6 times higher",
+                    "It is 8 times higher"
+                ],
+                correct: 2
+            },
+            {
+                q: "A relatively minor pelvic or hip fracture in an elderly patient can cause life-threatening exsanguination into which region?",
+                options: [
+                    "Pleural space",
+                    "Retroperitoneal space",
+                    "Intraperitoneal space only",
+                    "Mediastinal cavity"
+                ],
+                correct: 2
+            },
+            {
+                q: "During fluid and blood product resuscitation, elderly trauma patients are uniquely susceptible to:",
+                options: [
+                    "Hypercoagulability and rapid dehydration",
+                    "Coagulopathy and fluid overload",
+                    "Severe polycythemia and hypocalcemia",
+                    "Hypoosmolar non-ketotic states"
+                ],
+                correct: 2
+            },
+            {
+                q: "What diagnostic management strategy is recommended when evaluating \"Disability\" in geriatric trauma?",
+                options: [
+                    "Defer CT scanning until neurologic deterioration occurs",
+                    "Liberal use of CT scan due to higher risk for spinal cord and cervical spine injury",
+                    "Routine plain radiographs only",
+                    "Perform lumbar puncture before imaging"
+                ],
+                correct: 2
+            },
+            {
+                q: "Under \"Exposure,\" geriatric trauma patients are particularly prone to which conditions?",
+                options: [
+                    "Hypothermia and skin infection",
+                    "Hyperthermia and wound dehiscence",
+                    "Keloid formation and sweat gland retention",
+                    "Severe hyperhidrosis"
+                ],
+                correct: 1
+            },
+            {
+                q: "Which pre-existing medical condition is listed as having a high impact on mortality and morbidity during the secondary survey?",
+                options: [
+                    "Osteoarthritis",
+                    "Gouty arthritis",
+                    "Liver cirrhosis",
+                    "Peptic ulcer disease"
+                ],
+                correct: 3
+            },
+            {
+                q: "Physical abuse accounts for what percentage of geriatric abuse cases?",
+                options: [
+                    "7%",
+                    "14%",
+                    "28%",
+                    "42%"
+                ],
+                correct: 2
+            },
+            {
+                q: "Which physical examination finding strongly raises suspicion of physical abuse in an elderly trauma patient?",
+                options: [
+                    "Abrasions on the wrist or ankle, and injuries in various stages of evolution",
+                    "Isolated ecchymosis over the pre-tibial surface",
+                    "Typical femoral neck fracture following a slip",
+                    "Bilateral lower limb venous stasis changes"
+                ],
+                correct: 1
+            }
+        ];
+
+        // =================================================================
+        // 4. MULTIPLAYER ENGINE WITH DYNAMIC TIME-BASED SCORING
+        // =================================================================
+        let isHost = false;
+        let roomPin = "";
+        let myId = "usr_" + Math.random().toString(36).substring(2, 9);
+        let myName = "";
+        let currentQIndex = -1;
+        let myScore = 0;
+        let myChoiceThisRound = null;
+        let roundEarnedPoints = 0; 
+        let previewCountdown = null;
+        let timerCountdown = null;
+        let autoAdvanceCountdown = null;
+        let liveScoreInterval = null;
+        let answerPhaseStartTime = 0; 
+        let secondsLeft = 20;
+        let totalPlayerCount = 0;
+        let isAnsweringPhase = false;
+
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        // Join as Player
+        function joinAsPlayer() {
+            const pin = document.getElementById('pin-input').value.trim().toUpperCase();
+            const name = document.getElementById('name-input').value.trim();
+            if (!pin || !name) { alert("Please enter both Room PIN and Nickname!"); return; }
+
+            isHost = false;
+            roomPin = pin;
+            myName = name;
+            document.getElementById('player-hud-name').innerText = myName;
+
+            SoundTrack.startLobbyMusic();
+            showScreen('lobby-screen');
+            document.getElementById('lobby-pin-display').innerText = roomPin;
+            document.getElementById('player-waiting-spinner').style.display = "block";
+            document.getElementById('host-qr-section').style.display = "none";
+            document.getElementById('lobby-role-msg').innerText = "Waiting for host to start the game...";
+
+            if (db) {
+                db.ref(`rooms/${roomPin}/players/${myId}`).set({ name: myName, score: 0 });
+                listenToRoomState();
+            }
+        }
+
+        // Host on Main Screen
+        function startAsHost() {
+            const pin = document.getElementById('pin-input').value.trim().toUpperCase() || "GERIATRIC" + Math.floor(100 + Math.random() * 900);
+            isHost = true;
+            roomPin = pin;
+            myName = "HOST";
+            document.getElementById('player-hud-name').innerText = "HOST VIEW";
+            document.getElementById('score-hud').style.display = "none";
+            document.getElementById('answers-counter').style.display = "inline-block";
+
+            // Generate QR code pointing to https://edhkn.github.io/tlsm/geriatric.html (auto-fills pin)
+            const pageUrl = window.location.origin.includes('github.io') 
+                ? window.location.href.split('?')[0] 
+                : "https://edhkn.github.io/tlsm/geriatric.html";
+            const targetUrl = `${pageUrl}?pin=${encodeURIComponent(roomPin)}`;
+            const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(targetUrl)}`;
+            
+            document.getElementById('host-qr-image').src = qrApiUrl;
+            document.getElementById('qr-url-text').innerText = pageUrl;
+            document.getElementById('host-qr-section').style.display = "flex";
+
+            SoundTrack.startLobbyMusic();
+            showScreen('lobby-screen');
+            document.getElementById('lobby-pin-display').innerText = roomPin;
+            document.getElementById('host-start-btn').style.display = "inline-block";
+            document.getElementById('player-waiting-spinner').style.display = "none";
+            document.getElementById('lobby-role-msg').innerText = "Scan the QR code or enter the PIN to join:";
+
+            if (db) {
+                db.ref(`rooms/${roomPin}`).set({
+                    status: 'lobby',
+                    qIndex: -1,
+                    hostId: myId
+                });
+                listenToRoomState();
+            }
+        }
+
+        // Real-time synchronization
+        function listenToRoomState() {
+            if (!db) return;
+
+            db.ref(`rooms/${roomPin}/players`).on('value', snap => {
+                const players = snap.val() || {};
+                const entries = Object.entries(players);
+                totalPlayerCount = entries.length;
+                document.getElementById('roster-count').innerText = totalPlayerCount;
+
+                const rosterDiv = document.getElementById('player-roster');
+                rosterDiv.innerHTML = '';
+                entries.forEach(([id, p]) => {
+                    const chip = document.createElement('div');
+                    chip.className = 'player-chip';
+                    chip.innerText = p.name;
+                    rosterDiv.appendChild(chip);
+                });
+            });
+
+            db.ref(`rooms/${roomPin}/answers`).on('value', snap => {
+                const answers = snap.val() || {};
+                const answeredCount = Object.keys(answers).length;
+
+                if (isHost) {
+                    document.getElementById('answers-counter').innerText = `Answers: ${answeredCount}/${totalPlayerCount}`;
+                    
+                    if (isAnsweringPhase && totalPlayerCount > 0 && answeredCount >= totalPlayerCount) {
+                        db.ref(`rooms/${roomPin}/status`).once('value', s => {
+                            if (s.val() === 'playing') {
+                                clearInterval(timerCountdown);
+                                clearInterval(liveScoreInterval);
+                                db.ref(`rooms/${roomPin}`).update({ status: 'reveal' });
+                            }
+                        });
+                    }
+                }
+            });
+
+            db.ref(`rooms/${roomPin}`).on('value', snap => {
+                const room = snap.val();
+                if (!room) return;
+
+                if (room.status === 'playing') {
+                    if (currentQIndex !== room.qIndex) {
+                        currentQIndex = room.qIndex;
+                        renderQuestion(currentQIndex);
+                    }
+                } else if (room.status === 'reveal') {
+                    renderFeedbackScreen();
+                } else if (room.status === 'ended') {
+                    SoundTrack.startPodiumFanfare();
+                    showPodium();
+                }
+            });
+        }
+
+        function hostLaunchesQuiz() {
+            if (!db) return;
+            db.ref(`rooms/${roomPin}`).update({
+                status: 'playing',
+                qIndex: 0,
+                answers: null
+            });
+        }
+
+        function renderQuestion(idx) {
+            clearInterval(previewCountdown);
+            clearInterval(timerCountdown);
+            clearInterval(liveScoreInterval);
+
+            isAnsweringPhase = false;
+            myChoiceThisRound = null;
+            roundEarnedPoints = 0;
+            showScreen('game-screen');
+
+            const q = quizData[idx];
+            document.getElementById('q-counter').innerText = `Q: ${idx + 1}/${quizData.length}`;
+            if (!isHost) document.getElementById('score-hud').innerText = `Score: ${myScore}`;
+            document.getElementById('question-text').innerText = q.q;
+            document.getElementById('player-submitted-banner').style.display = "none";
+
+            const timerEl = document.getElementById('timer');
+            const phaseBadge = document.getElementById('round-phase-indicator');
+            const livePtsBadge = document.getElementById('live-points-badge');
+            const previewBox = document.getElementById('preview-box');
+            const container = document.getElementById('options-container');
+
+            timerEl.classList.add('timer-preview');
+            phaseBadge.innerText = "Read Question";
+            phaseBadge.style.background = "#ffd700";
+            phaseBadge.style.color = "#1a0b2e";
+            livePtsBadge.style.display = "none";
+            previewBox.style.display = "block";
+            container.style.display = "none";
+
+            if (isHost) {
+                document.getElementById('answers-counter').innerText = `Answers: 0/${totalPlayerCount}`;
+            }
+
+            container.innerHTML = '';
+            container.classList.remove('disabled-grid');
+
+            const shapes = ['▲', '◆', '●', '■'];
+            const colors = ['btn-red', 'btn-blue', 'btn-yellow', 'btn-green'];
+
+            q.options.forEach((optText, optIdx) => {
+                const choiceNum = optIdx + 1;
+                if (isHost) {
+                    const card = document.createElement('div');
+                    card.className = `option-item ${colors[optIdx]}`;
+                    card.innerHTML = `<span class="shape">${shapes[optIdx]}</span><span>${optText}</span>`;
+                    container.appendChild(card);
+                } else {
+                    const btn = document.createElement('button');
+                    btn.className = `option-item ${colors[optIdx]}`;
+                    btn.innerHTML = `<span class="shape">${shapes[optIdx]}</span><span>${optText}</span>`;
+                    btn.onclick = () => playerPicksAnswer(choiceNum);
+                    container.appendChild(btn);
+                }
+            });
+
+            let previewSeconds = 5;
+            timerEl.innerText = previewSeconds;
+            SoundTrack.startPreviewTone();
+
+            previewCountdown = setInterval(() => {
+                previewSeconds--;
+                if (previewSeconds > 0) {
+                    timerEl.innerText = previewSeconds;
+                } else {
+                    clearInterval(previewCountdown);
+                    startAnswerPhase();
+                }
+            }, 1000);
+        }
+
+        function startAnswerPhase() {
+            isAnsweringPhase = true;
+            answerPhaseStartTime = Date.now(); 
+
+            const timerEl = document.getElementById('timer');
+            const phaseBadge = document.getElementById('round-phase-indicator');
+            const livePtsBadge = document.getElementById('live-points-badge');
+            const previewBox = document.getElementById('preview-box');
+            const container = document.getElementById('options-container');
+
+            previewBox.style.display = "none";
+            container.style.display = "grid";
+            timerEl.classList.remove('timer-preview');
+
+            phaseBadge.innerText = "Answer Now!";
+            phaseBadge.style.background = "#00e096";
+            phaseBadge.style.color = "#083b27";
+
+            livePtsBadge.style.display = "inline-block";
+            livePtsBadge.innerText = "⚡ 1,000 pts";
+
+            clearInterval(liveScoreInterval);
+            liveScoreInterval = setInterval(() => {
+                if (!isAnsweringPhase || myChoiceThisRound !== null) return;
+                const elapsedMs = Math.max(0, Date.now() - answerPhaseStartTime);
+                const currentPotential = Math.max(500, Math.round(1000 - (500 * (elapsedMs / 20000))));
+                livePtsBadge.innerText = `⚡ ${currentPotential.toLocaleString()} pts`;
+            }, 50);
+
+            SoundTrack.playPopSfx();
+            setTimeout(() => {
+                if (isAnsweringPhase) SoundTrack.startGameMusic();
+            }, 300);
+
+            secondsLeft = 20;
+            timerEl.innerText = secondsLeft;
+            clearInterval(timerCountdown);
+
+            timerCountdown = setInterval(() => {
+                secondsLeft--;
+                timerEl.innerText = secondsLeft;
+
+                if (secondsLeft <= 0) {
+                    clearInterval(timerCountdown);
+                    clearInterval(liveScoreInterval);
+                    if (isHost && db) {
+                        db.ref(`rooms/${roomPin}`).update({ status: 'reveal' });
+                    }
+                }
+            }, 1000);
+        }
+
+        function playerPicksAnswer(choice) {
+            if (isHost || !isAnsweringPhase || myChoiceThisRound !== null) return;
+            myChoiceThisRound = choice;
+            clearInterval(liveScoreInterval);
+
+            const responseTimeMs = Math.max(0, Date.now() - answerPhaseStartTime);
+            
+            document.getElementById('options-container').classList.add('disabled-grid');
+            document.getElementById('player-submitted-banner').style.display = "block";
+
+            const q = quizData[currentQIndex];
+            if (choice === q.correct) {
+                const decayRatio = Math.min(1, responseTimeMs / 20000);
+                roundEarnedPoints = Math.max(500, Math.round(1000 - (500 * decayRatio)));
+                myScore += roundEarnedPoints;
+
+                document.getElementById('live-points-badge').innerText = `⚡ +${roundEarnedPoints} pts (Locked)`;
+                if (db) db.ref(`rooms/${roomPin}/players/${myId}`).update({ score: myScore });
+            } else {
+                roundEarnedPoints = 0;
+                document.getElementById('live-points-badge').innerText = `⚡ 0 pts`;
+            }
+
+            if (db) {
+                db.ref(`rooms/${roomPin}/answers/${myId}`).set({
+                    choice: choice,
+                    timeMs: responseTimeMs,
+                    timestamp: Date.now()
+                });
+            }
+        }
+
+        function renderFeedbackScreen() {
+            clearInterval(previewCountdown);
+            clearInterval(timerCountdown);
+            clearInterval(liveScoreInterval);
+            isAnsweringPhase = false;
+
+            SoundTrack.stopMusic();
+            showScreen('feedback-screen');
+
+            const q = quizData[currentQIndex];
+            const banner = document.getElementById('feedback-banner');
+            const title = document.getElementById('feedback-title');
+            const ansText = document.getElementById('correct-answer-text');
+            const ptsText = document.getElementById('feedback-points');
+            const hostControls = document.getElementById('host-feedback-controls');
+
+            ansText.innerText = `Correct Answer: ${q.options[q.correct - 1]}`;
+
+            if (isHost) {
+                banner.className = 'card feedback-banner host-reveal-bg';
+                title.innerText = "Round Completed!";
+                ptsText.style.display = "none";
+                hostControls.style.display = "block";
+
+                let autoSeconds = 5;
+                const autoMsg = document.getElementById('auto-advance-msg');
+                autoMsg.innerText = `Auto-advancing in ${autoSeconds}s...`;
+                clearInterval(autoAdvanceCountdown);
+
+                autoAdvanceCountdown = setInterval(() => {
+                    autoSeconds--;
+                    if (autoSeconds > 0) {
+                        autoMsg.innerText = `Auto-advancing in ${autoSeconds}s...`;
+                    } else {
+                        clearInterval(autoAdvanceCountdown);
+                        hostNextQuestion();
+                    }
+                }, 1000);
+
+            } else {
+                ptsText.style.display = "inline-block";
+                hostControls.style.display = "none";
+
+                if (myChoiceThisRound === q.correct) {
+                    banner.className = 'card feedback-banner correct-bg';
+                    title.innerText = "Correct!";
+                    ptsText.innerText = `+${roundEarnedPoints.toLocaleString()} pts`;
+                    SoundTrack.playSfx('correct');
+                } else if (myChoiceThisRound === null) {
+                    banner.className = 'card feedback-banner wrong-bg';
+                    title.innerText = "Time's Up!";
+                    ptsText.innerText = "+0 pts";
+                    SoundTrack.playSfx('wrong');
+                } else {
+                    banner.className = 'card feedback-banner wrong-bg';
+                    title.innerText = "Incorrect!";
+                    ptsText.innerText = "+0 pts";
+                    SoundTrack.playSfx('wrong');
+                }
+            }
+        }
+
+        function hostNextQuestion() {
+            clearInterval(autoAdvanceCountdown);
+            if (!db) return;
+
+            if (currentQIndex + 1 < quizData.length) {
+                db.ref(`rooms/${roomPin}`).update({
+                    status: 'playing',
+                    qIndex: currentQIndex + 1,
+                    answers: null
+                });
+            } else {
+                db.ref(`rooms/${roomPin}`).update({ status: 'ended' });
+            }
+        }
+
+        function showPodium() {
+            showScreen('end-screen');
+            document.getElementById('winner-room-tag').innerText = `Room PIN: ${roomPin}`;
+            if (!db) return;
+
+            db.ref(`rooms/${roomPin}/players`).once('value', snap => {
+                const sorted = Object.entries(snap.val() || {})
+                    .map(([id, p]) => ({ id, ...p }))
+                    .sort((a, b) => (b.score || 0) - (a.score || 0));
+
+                document.getElementById('p1-name').innerText = sorted[0] ? sorted[0].name : '-';
+                document.getElementById('p1-score').innerText = sorted[0] ? `${sorted[0].score.toLocaleString()} pts` : '0 pts';
+                document.getElementById('p2-name').innerText = sorted[1] ? sorted[1].name : '-';
+                document.getElementById('p2-score').innerText = sorted[1] ? `${sorted[1].score.toLocaleString()} pts` : '0 pts';
+                document.getElementById('p3-name').innerText = sorted[2] ? sorted[2].name : '-';
+                document.getElementById('p3-score').innerText = sorted[2] ? `${sorted[2].score.toLocaleString()} pts` : '0 pts';
+
+                const tbody = document.getElementById('leaderboard-tbody');
+                tbody.innerHTML = '';
+                sorted.forEach((p, idx) => {
+                    const tr = document.createElement('tr');
+                    if (p.id === myId) tr.classList.add('my-row');
+                    tr.innerHTML = `
+                        <td><strong>#${idx + 1}</strong></td>
+                        <td>${escapeHtml(p.name)} ${p.id === myId ? '(You)' : ''}</td>
+                        <td>${(p.score || 0).toLocaleString()}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            });
+        }
+
+        function escapeHtml(str) {
+            return String(str).replace(/[&<>"']/g, s => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[s]));
+        }
+    </script>
+</body>
+</html>
