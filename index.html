@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>TLSM Arena Portal | Hospital Kuala Nerang</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-navy: #1e293b;
+      --accent-teal: #0f766e;
+      --teal-light: #14b8a6;
+      --teal-subtle: #f0fdfa;
+      --teal-border: #ccfbf1;
+      --slate-muted: #64748b;
+      --border-color: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: linear-gradient(180deg, #f0fdfa 0%, #f8fafc 180px, #f1f5f9 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
+      display: flex;
+      flex-direction: column;
+      color: var(--primary-navy);
+      padding: 10px 8px;
+      padding-bottom: calc(10px + env(safe-area-inset-bottom));
+      overflow-x: hidden;
+    }
+
+    /* Floating Navigation */
+    nav {
+      position: sticky;
+      top: 8px;
+      z-index: 1000;
+      max-width: 1020px;
+      margin: 0 auto 15px auto;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(12px);
+      border-radius: 50px;
+      padding: 8px 18px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .logo-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #2c3e50;
+      min-width: 0;
+    }
+    .logo-group:hover { color: #2c3e50; text-decoration: none; }
+    
+    .dept-logo {
+      height: 38px;
+      width: auto;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+    
+    .logo-text {
+      font-weight: 700;
+      font-size: 0.92rem;
+      line-height: 1.2;
+      display: flex;
+      flex-direction: column;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .logo-text span {
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: #7f8c8d;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .nav-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.78rem;
+      background: var(--teal-subtle);
+      color: var(--accent-teal);
+      border: 1px solid var(--teal-border);
+      flex-shrink: 0;
+    }
+
+    .btn-nav-logout {
+      display: none;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .btn-nav-logout:hover {
+      background: #fecaca;
+    }
+
+    .portal-wrapper {
+      max-width: 1020px;
+      width: 100%;
+      margin: 0 auto 25px auto;
+      position: relative;
+    }
+
+    .card-shell {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 24px 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+      border: 1px solid var(--border-color);
+      position: relative;
+      transition: box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+
+    .auth-highlight {
+      border-color: var(--accent-teal) !important;
+      box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.15) !important;
+    }
+
+    /* Auth Tabs & Inputs */
+    .auth-tabs {
+      display: inline-flex;
+      background: #f1f5f9;
+      padding: 4px;
+      border-radius: 30px;
+      border: 1px solid var(--border-color);
+    }
+
+    .auth-tab-btn {
+      border: none;
+      background: transparent;
+      color: var(--slate-muted);
+      font-weight: 700;
+      font-size: 0.8rem;
+      padding: 6px 18px;
+      border-radius: 24px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .auth-tab-btn.active {
+      background: var(--accent-teal);
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(15, 118, 110, 0.25);
+    }
+
+    .portal-input {
+      border: 1.5px solid var(--border-color);
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--primary-navy);
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .portal-input:focus {
+      border-color: var(--accent-teal);
+      box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12);
+      outline: none;
+    }
+
+    .kahoot-card {
+      background: #ffffff;
+      border: 2px solid var(--border-color);
+      border-radius: 16px;
+      padding: 20px 18px;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      position: relative;
+    }
+
+    .kahoot-card:hover {
+      border-color: var(--accent-teal);
+      box-shadow: 0 8px 24px rgba(15, 118, 110, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .card-icon-chip {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: var(--teal-subtle);
+      color: var(--accent-teal);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.15rem;
+      border: 1px solid var(--teal-border);
+      flex-shrink: 0;
+    }
+
+    .btn-launch {
+      background: var(--accent-teal);
+      border-color: var(--accent-teal);
+      color: #ffffff;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      padding: 10px 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: all 0.15s ease;
+      margin-top: auto;
+      cursor: pointer;
+    }
+
+    .btn-launch:hover {
+      background: #0d655e;
+      border-color: #0d655e;
+      color: #ffffff;
+    }
+
+    .btn-launch.locked-state {
+      background: #475569;
+      border-color: #475569;
+    }
+
+    .btn-launch.locked-state:hover {
+      background: #334155;
+      border-color: #334155;
+    }
+
+    /* Single-Line Footer */
+    footer {
+      margin-top: auto;
+      background: #ffffff;
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+      padding: 12px 16px;
+      width: 100%;
+    }
+
+    .footer-container {
+      max-width: 1020px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: nowrap;
+    }
+
+    .footer-logos {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .footer-logos img {
+      height: 26px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .logo-divider {
+      width: 1px;
+      height: 18px;
+      background-color: #cbd5e1;
+    }
+
+    .footer-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #475569;
+      background: #e2e8f0;
+      padding: 3px 9px;
+      border-radius: 16px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      background-color: #22c55e;
+      border-radius: 50%;
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(34, 197, 94, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    }
+
+    .footer-copyright {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      margin: 0;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .footer-copyright span {
+      color: #334155;
+      font-weight: 600;
+    }
+
+    @media (max-width: 576px) {
+      body { padding: 8px 6px; }
+      nav { padding: 6px 12px; margin-bottom: 10px; }
+      .dept-logo { height: 32px; }
+      .logo-text span { display: none; }
+      .card-shell { padding: 18px 14px; border-radius: 16px; }
+      .footer-container { gap: 6px; }
+      .footer-logos img { height: 22px; }
+      .footer-status, .footer-copyright { font-size: 0.68rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Navigation -->
+  <nav>
+    <a href="index.html" class="logo-group">
+      <img src="https://lh3.googleusercontent.com/d/1O2Nj1Dr4U6wo7ISjdkDRukPYwZUkOOuJ" alt="Logo Jabatan" class="dept-logo">
+      <div class="logo-text">
+        Hospital Kuala Nerang
+        <span>Jabatan Kecemasan & Trauma</span>
+      </div>
+    </a>
+    <div class="nav-actions">
+      <div class="nav-badge" id="nav-user-badge">
+        <i class="bi bi-shield-plus"></i> <span id="nav-badge-text">TLSM Arena</span>
+      </div>
+      <button type="button" class="btn-nav-logout" id="nav-logout-btn" onclick="logoutUser()">
+        <i class="bi bi-box-arrow-right"></i> Logout
+      </button>
+    </div>
+  </nav>
+
+  <main class="portal-wrapper">
+
+    <!-- Header Banner -->
+    <div class="card-shell text-center mb-3">
+      <div class="mb-2">
+        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-bold" style="font-size: 0.78rem;">
+          <i class="bi bi-lightning-charge-fill me-1"></i> TRAUMA LIFE SUPPORT MALAYSIA (TLSM)
+        </span>
+      </div>
+      <h3 class="fw-bold text-dark mb-1">TLSM Interactive Arena</h3>
+      <p class="text-muted small mb-0">15 Core Trauma Modules • Live Multiplayer & Self-Paced Solo Practice</p>
+    </div>
+
+    <!-- Trainee Authentication Card -->
+    <div class="card-shell mb-3" id="auth-card">
+      <!-- Signed-Out View -->
+      <div id="auth-guest-view">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+          <div>
+            <h6 class="fw-bold text-dark mb-0">
+              <i class="bi bi-person-badge-fill text-success me-1"></i> Trainee Portal Access
+            </h6>
+            <p class="text-muted small mb-0">Sign in or register your User Name, Email, and Password to unlock all 15 TLSM modules.</p>
+          </div>
+          <div class="auth-tabs">
+            <button type="button" class="auth-tab-btn active" id="tab-login" onclick="switchAuthMode('login')">Sign In</button>
+            <button type="button" class="auth-tab-btn" id="tab-register" onclick="switchAuthMode('register')">Register</button>
+          </div>
+        </div>
+
+        <div id="auth-alert" class="alert py-2 px-3 small fw-semibold mb-3" style="display: none; border-radius: 12px;"></div>
+
+        <form id="auth-form" onsubmit="handleAuthSubmit(event)">
+          <div class="row g-2 align-items-end">
+            <!-- Username (Shown in Register Mode) -->
+            <div class="col-md-4" id="username-field-col" style="display: none;">
+              <label class="form-label small fw-bold text-secondary mb-1">Full Name / Username</label>
+              <input type="text" id="auth-username" class="form-control portal-input" placeholder="e.g. Dr. Ahmad" maxlength="32">
+            </div>
+
+            <!-- Email -->
+            <div class="col-md-5" id="email-field-col">
+              <label class="form-label small fw-bold text-secondary mb-1">Email Address</label>
+              <input type="email" id="auth-email" class="form-control portal-input" placeholder="name@moh.gov.my" required>
+            </div>
+
+            <!-- Password -->
+            <div class="col-md-4" id="password-field-col">
+              <label class="form-label small fw-bold text-secondary mb-1">Password</label>
+              <div class="input-group">
+                <input type="password" id="auth-password" class="form-control portal-input" placeholder="Min. 6 characters" minlength="6" required>
+                <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility()" style="border-radius: 0 12px 12px 0; border-color: var(--border-color);">
+                  <i class="bi bi-eye" id="pwd-eye-icon"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="col-md-3" id="submit-field-col">
+              <button type="submit" class="btn btn-launch w-100" id="auth-submit-btn" style="padding: 10px 14px;">
+                <i class="bi bi-box-arrow-in-right"></i> <span id="auth-submit-text">Sign In</span>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Signed-In Profile Banner -->
+      <div id="auth-logged-in-view" style="display: none;">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+          <div class="d-flex align-items-center gap-3">
+            <div class="card-icon-chip">
+              <i class="bi bi-person-check-fill"></i>
+            </div>
+            <div>
+              <div class="d-flex align-items-center gap-2">
+                <h6 class="fw-bold text-dark mb-0" id="profile-display-name">Trainee</h6>
+                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill" style="font-size: 0.7rem;">
+                  <i class="bi bi-check-circle-fill me-1"></i>Verified Access
+                </span>
+              </div>
+              <p class="text-muted small mb-0" id="profile-display-email">trainee@moh.gov.my</p>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-light text-secondary border px-3 py-2 rounded-pill" style="font-size: 0.75rem;">
+              <i class="bi bi-collection-play-fill text-success me-1"></i>15 Modules Unlocked
+            </span>
+            <button type="button" class="btn btn-sm btn-outline-danger rounded-pill fw-bold px-3" onclick="logoutUser()">
+              <i class="bi bi-box-arrow-right me-1"></i>Sign Out
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search & Filter Bar -->
+    <div class="card-shell mb-3 py-3">
+      <div class="row g-2 align-items-center">
+        <div class="col-md-8">
+          <div class="input-group">
+            <span class="input-group-text bg-light border-end-0" style="border-radius: 12px 0 0 12px; border-color: var(--border-color);">
+              <i class="bi bi-search text-muted"></i>
+            </span>
+            <input type="text" id="module-search" class="form-control portal-input border-start-0" style="border-radius: 0 12px 12px 0;" placeholder="Search TLSM topic (e.g. Airway, Shock, Burn, MCI, Triage)..." oninput="filterModules()">
+          </div>
+        </div>
+        <div class="col-md-4 text-md-end">
+          <span class="text-muted small fw-semibold" id="module-count-label">Showing all 15 TLSM modules</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modules Grid (All 15 TLSM Quizzes) -->
+    <div class="row g-3 mb-3" id="modules-grid">
+
+      <!-- 1. Initial Assessment -->
+      <div class="col-lg-4 col-md-6 module-item" data-keywords="initial assessment primary survey secondary tertiary cABCDE AT-MIST e-FAST">
+        <div class="kahoot-card">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="card-icon-chip"><i class="bi bi-clipboard2-pulse-fill"></i></div>
+            <span class="badge bg-light text-secondary border px-2 py-1 rounded-pill" style="font-size: 0.72rem;">Module 01</span>
+          </div>
+          <h5 class="fw-bold text-dark mb-1">Initial Assessment</h5>
+          <p class="text-muted small mb-2">Systematic Primary & Secondary Survey</p>
+          <a href="initialassessment.html" class="btn btn-launch" onclick="return handleModuleLaunch(event, 'initialassessment.html')">
+            <i class="bi bi-play-circle-fill"></i> Launch Initial Assessment
+          </a>
+        </div>
+      </div>
+
+      <!-- 2. Airway Management -->
+      <div class="col-lg-4 col-md-6 module-item" data-keywords="airway ventilation LEMON ROMAN SMART RODS RSI 7Ps FONA cricothyroidotomy">
+        <div class="kahoot-card">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="card-icon-chip"><i class="bi bi-lungs-fill"></i></div>
+            <span class="badge bg-light text-secondary border px-2 py-1 rounded-pill" style="font-size: 0.72rem;">Module 02</span>
+          </div>
+          <h5 class="fw-bold text-dark mb-1">Airway Management</h5>
+          <p class="text-muted small mb-2">Definitive Airway & Ventilation Control</p>
+          <a href="airway.html" class="btn btn-launch" onclick="return handleModuleLaunch(event, 'airway.html')">
+            <i class="bi bi-play-circle-fill"></i> Launch Airway
+          </a>
+        </div>
+      </div>
+
+      <!-- 3. Shock & Resuscitation -->
+      <div class="col-lg-4 col-md-6 module-item" data-keywords="shock resuscitation hemorrhagic obstructive neurogenic CCTVR SCALPER DCR permissive hypotension TXA">
+        <div class="kahoot-card">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="card-icon-chip"><i class="bi bi-droplet-half"></i></div>
+            <span class="badge bg-light text-secondary border px-2 py-1 rounded-pill" style="font-size: 0.72rem;">Module 03</span>
+          </div>
+          <h5 class="fw-bold text-dark mb-1">Shock & Resuscitation</h5>
+          <p class="text-muted small mb-2">Hemodynamic Stabilization & DCR</p>
+          <a href="shock.html" class="btn btn-launch" onclick="return handleModuleLaunch(event, 'shock.html')">
+            <i class="bi bi-play-circle-fill"></i> Launch Shock
+          </a>
+        </div>
+      </div>
+
+      <!-- 4. Thoracic Trauma -->
+      <div class="col-lg-4 col-md-6 module-item" data-keywords="thoracic chest tension pneumothorax haemothorax cardiac tamponade flail chest thoracotomy">
+        <div class="kahoot-card">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="card-icon-chip"><i class="bi bi-heart-pulse-fill"></i></div>
+            <span class="badge bg-light text-secondary border px-2 py-1 rounded-pill" style="font-size: 0.72rem;">Module 04</span>
+          </div>
+          <h5 class="fw-bold text-dark mb-1">Thoracic Trauma</h5>
+          <p class="text-muted small mb-2">Lethal & Potentially Lethal Chest Injuries</p>
+          <a href="thoracic.html" class="btn btn-launch" onclick="return handleModuleLaunch(event, 'thoracic.html')">
+            <i class="bi bi-play-circle-fill"></i> Launch Thoracic
+          </a>
+        </div>
+      </div>
+
+      <!-- 5. Abdominal Trauma -->
+      <div class="col-lg-4 col-md-6 module-item" data-keywords="abdomen abdominal blunt penetrating laparotomy local wound exploration E-FAST flank">
+        <div class="kahoot-card">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="card-icon-chip"><i class="bi bi-bandaid-fill"></i></div>
+            <span class="badge bg-light text-secondary border px-2 py-1 rounded-pill" style="font-size: 0.72rem;">Module 05</span>
+          </div>
+          <h5 class="fw-bold text-dark mb-1">Abdominal Trauma</h5>
+          <p class="text-muted small mb-2">Blunt, Penetrating & Flank Evaluation</p>
+          <a href="abdomen.html" class="btn btn-launch" onclick="return handleModuleLaunch(event, 'abdomen.html')">
+            <i class="bi bi-play-circle-fill"></i> Launch Abdomen
+          </a>
+        </div>
+      </div>
+
+      <!-- 6. Head Injury -->
+      <div class="col-lg-4 col-md-6 module-item" data-keywords="head injury neurotrauma TBI GCS Monro-Kellie ICP CPP Cushing EDH SDH DAI">
+        <div class="kahoot-card">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="card-icon-chip"><i class="bi bi-activity"></i></div>
+            <span class="badge bg-light text-secondary border px-2 py-1 rounded-pill" style="font-size: 0.72rem;">Module 06</span>
+          </div>
+          <h5 class="fw-bold text-dark mb-1">Head Injury</h5>
+          <p class="text-muted small mb-2">Neurotrauma & Intracranial Protection</p>
+          <a href="headinjury.html" class="btn btn-launch" onclick="return handleModuleLaunch(event, 'headinjury.html')">
+            <i class="bi bi-play-circle-fill"></i> Launch Head Injury
+          </a>
+        </div>
+      </div>
+
+      <!-- 7. Spine Injury -->
+      <div class="col-lg-4 col-md-6 module-item" data-keywords="spine spinal cord neurogenic spinal shock ASIA NEXUS Canadian C-Spine Rule">
+        <div class="kahoot-card">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="card-icon-chip"><i class="bi bi-person-standing"></i></div>
+            <span class="badge bg-light text-secondary border px-2 py-1 rounded-pill" style="font-size: 0.72rem;">Module 07</span>
+          </div>
+          <h5 class="fw-bold text-dark mb-1">Spine Injury</h5>
+          <p class="text-muted small mb-2">Vertebral & Spinal Cord Trauma</p>
+          <a href="spine.html" class="btn btn-launch" onclick="return handleModuleLaunch(event, 'spine.html')">
+            <i class="bi bi-play-circle-fill"></i> Launch Spine
+          </a>
+        </div>
+      </div>
+
+      <!-- 8. Pelvic Trauma -->
+      <div class="col-lg-4 col-md-6 module-item" data-keywords="pelvis pelvic fracture binder spring Morel-Lavallee angio-embolization packing">
+        <div class="kahoot-card">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="card-icon-chip"><i class="bi bi-shield-exclamation"></i></div>
+            <span class="badge bg-light text-secondary border px-2 py-1 rounded-pill" style="font-size: 0.72rem;">Module 08</span>
+          </div>
+          <h5 class="fw-bold text-dark mb-1">Pelvic Trauma</h5>
+          <p class="text-muted small mb-2">Hemorrhage Control & Pelvic Stabilization</p>
+          <a href="pelvis.html" class="btn btn-launch" onclick="return handleModuleLaunch(event, 'pelvis.html')">
+            <i class="bi bi-play-circle-fill"></i> Launch Pelvis
+          </a>
+        </div>
+      </div>
+
+      <!-- 9. Burn Management -->
+      <div class="col-lg-4 col-md-6 module-item" data-keywords="burn thermal inhalation Rule of Nines Lund Browder Parkland escharotomy">
+        <div class="kahoot-card">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="card-icon-chip"><i class="bi bi-fire"></i></div>
+            <span class="badge bg-light text-secondary border px-2 py-1 rounded-pill" style="font-size: 0.72rem;">Module 09</span>
+          </div>
+          <h5 class="fw-bold text-dark mb-1">Burn Management</h5>
+          <p class="text-muted small mb-2">Thermal, Inhalation & Fluid Resuscitation</p>
+          <a href="burn.html" class="btn btn-launch" onclick="return handleModuleLaunch(event, 'burn.html')">
+            <i class="bi bi-play-circle-fill"></i> Launch Burn
+          </a>
+        </div>
+      </div>
+
+      <!-- 10. Pediatric Trauma -->
+      <div class="col-lg-4 col-md-6 module-item" data-keywords="pediatric paeds child ETT intraosseous EZ-IO NAI ALARA">
+        <div class="kahoot-card">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="card-icon-chip"><i class="bi bi-emoji-smile-fill"></i></div>
+            <span class="badge bg-light text-secondary border px-2 py-1 rounded-pill" style="font-size: 0.72rem;">Module 10</span>
+          </div>
+          <h5 class="fw-bold text-dark mb-1">Pediatric Trauma</h5>
+          <p class="text-muted small mb-2">Anatomical & Physiological Child Care</p>
+          <a href="peadstrauma.html" class="btn btn-launch" onclick="return handleModuleLaunch(event, 'peadstrauma.html')">
+            <i class="bi bi-play-circle-fill"></i> Launch Pediatric
+          </a>
+        </div>
+      </div>
+
+      <!-- 11. Geriatric Trauma -->
+      <div class="col-lg-4 col-md-6 module-item" data-keywords="geriatric elderly falls beta-blocker rib fracture retroperitoneal abuse">
+        <div class="kahoot-card">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="card-icon-chip"><i class="bi bi-person-hearts"></i></div>
+            <span class="badge bg-light text-secondary border px-2 py-1 rounded-pill" style="font-size: 0.72rem;">Module 11</span>
+          </div>
+          <h5 class="fw-bold text-dark mb-1">Geriatric Trauma</h5>
+          <p class="text-muted small mb-2">Aging Physiology & Fragility Management</p>
+          <a href="geriatrictrauma.html" class="btn btn-launch" onclick="return handleModuleLaunch(event, 'geriatrictrauma.html')">
+            <i class="bi bi-play-circle-fill"></i> Launch Geriatric
+          </a>
+        </div>
+      </div>
+
+      <!-- 12. Trauma in Pregnancy -->
+      <div class="col-lg-4 col-md-6 module-item" data-keywords="pregnancy obstetric gravid uterus left lateral tilt abruptio placentae CTG hysterotomy">
+        <div class="kahoot-card">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="card-icon-chip"><i class="bi bi-heart-fill"></i></div>
+            <span class="badge bg-light text-secondary border px-2 py-1 rounded-pill" style="font-size: 0.72rem;">Module 12</span>
+          </div>
+          <h5 class="fw-bold text-dark mb-1">Trauma in Pregnancy</h5>
+          <p class="text-muted small mb-2">Maternal & Fetal Resuscitation Priorities</p>
+          <a href="pregnancy.html" class="btn btn-launch" onclick="return handleModuleLaunch(event, 'pregnancy.html')">
+            <i class="bi bi-play-circle-fill"></i> Launch Pregnancy
+          </a>
+        </div>
+      </div>
+
+      <!-- 13. Trauma Triage -->
+      <div class="col-lg-4 col-md-6 module-item" data-keywords="triage bypass Malaysian Triage Category Red Yellow Green pre-hospital handover">
+        <div class="kahoot-card">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="card-icon-chip"><i class="bi bi-signpost-split-fill"></i></div>
+            <span class="badge bg-light text-secondary border px-2 py-1 rounded-pill" style="font-size: 0.72rem;">Module 13</span>
+          </div>
+          <h5 class="fw-bold text-dark mb-1">Trauma Triage</h5>
+          <p class="text-muted small mb-2">Pre-Hospital Bypass & ED Categorization</p>
+          <a href="traumatriage.html" class="btn btn-launch" onclick="return handleModuleLaunch(event, 'traumatriage.html')">
+            <i class="bi bi-play-circle-fill"></i> Launch Triage
+          </a>
+        </div>
+      </div>
+
+      <!-- 14. Disaster Management & MCI -->
+      <div class="col-lg-4 col-md-6 module-item" data-keywords="disaster MCI mass casualty MKN Arahan 20 ICS PKTK START JumpSTART SALT">
+        <div class="kahoot-card">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="card-icon-chip"><i class="bi bi-exclamation-triangle-fill"></i></div>
+            <span class="badge bg-light text-secondary border px-2 py-1 rounded-pill" style="font-size: 0.72rem;">Module 14</span>
+          </div>
+          <h5 class="fw-bold text-dark mb-1">Disaster & MCI</h5>
+          <p class="text-muted small mb-2">Mass Casualty Incident Command & Triage</p>
+          <a href="mci.html" class="btn btn-launch" onclick="return handleModuleLaunch(event, 'mci.html')">
+            <i class="bi bi-play-circle-fill"></i> Launch Disaster & MCI
+          </a>
+        </div>
+      </div>
+
+      <!-- 15. Transfer to Definitive Care -->
+      <div class="col-lg-4 col-md-6 module-item" data-keywords="transfer definitive care step-up step-down protocol inter-hospital transport">
+        <div class="kahoot-card">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="card-icon-chip"><i class="bi bi-truck-front-fill"></i></div>
+            <span class="badge bg-light text-secondary border px-2 py-1 rounded-pill" style="font-size: 0.72rem;">Module 15</span>
+          </div>
+          <h5 class="fw-bold text-dark mb-1">Transfer to Definitive Care</h5>
+          <p class="text-muted small mb-2">Safe Inter-Hospital Trauma Transport</p>
+          <a href="traumatransfer.html" class="btn btn-launch" onclick="return handleModuleLaunch(event, 'traumatransfer.html')">
+            <i class="bi bi-play-circle-fill"></i> Launch Transfer
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Empty Search State -->
+    <div id="no-results-box" class="card-shell text-center mb-3" style="display: none;">
+      <i class="bi bi-search text-muted" style="font-size: 2rem;"></i>
+      <h6 class="fw-bold text-dark mt-2 mb-1">No matching TLSM module found</h6>
+      <p class="text-muted small mb-2">Try searching another keyword such as Airway, Shock, Head, Pelvis, or Triage.</p>
+      <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="resetSearch()">Reset Filter</button>
+    </div>
+
+    <!-- Quick Session Guide -->
+    <div class="card-shell">
+      <h6 class="fw-bold mb-2 text-dark small">
+        <i class="bi bi-info-circle-fill text-primary me-1"></i> TLSM Arena Session Guidelines
+      </h6>
+      <div class="row g-2 text-muted" style="font-size: 0.8rem; line-height: 1.45;">
+        <div class="col-sm-4">
+          <div class="p-2 bg-light rounded-3 border h-100">
+            <strong class="text-dark d-block mb-1"><i class="bi bi-broadcast text-primary me-1"></i>Live Arena Mode</strong>
+            Host on the main screen with QR auto-PIN join for real-time departmental quiz battles.
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <div class="p-2 bg-light rounded-3 border h-100">
+            <strong class="text-dark d-block mb-1"><i class="bi bi-bullseye text-danger me-1"></i>Self-Paced Solo</strong>
+            Practice any of the 15 modules untimed with instant feedback and full answer review.
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <div class="p-2 bg-light rounded-3 border h-100">
+            <strong class="text-dark d-block mb-1"><i class="bi bi-award text-success me-1"></i>TLSM Mastery</strong>
+            Complete all 20 MCQs per chapter to reinforce emergency trauma protocols and clinical readiness.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Single-Line Footer -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-logos">
+        <img src="https://lh3.googleusercontent.com/d/1O2Nj1Dr4U6wo7ISjdkDRukPYwZUkOOuJ" alt="HKN Logo">
+        <div class="logo-divider"></div>
+        <img src="https://lh3.googleusercontent.com/d/1LdMRx-PF49CWOcrjthClGLJg-yQoJ2mt" alt="MOH Logo">
+      </div>
+
+      <div class="footer-status">
+        <span class="pulse-dot"></span>
+        <span>EDHKN PORTAL Ver 2.0</span>
+      </div>
+
+      <p class="footer-copyright">© 2026 <span>Yassin Razak</span> | All Rights Reserved</p>
+    </div>
+  </footer>
+
+  <script>
+    // =================================================================
+    // 1. GOOGLE SHEETS BACKEND CONFIGURATION
+    // =================================================================
+    // IMPORTANT: Replace this URL with your actual deployed Google Apps Script Web App URL!
+    // See the step-by-step instructions provided in the prompt reply on how to set this up.
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxirOxL-mDWIW1n6eQf5leVfCUmF1DdtYKvUm13OPo_O0Oqmbt1wswpqVRShjrqvbxuww/exec"; 
+
+    // =================================================================
+    // 2. USER AUTHENTICATION (USERNAME, EMAIL & PASSWORD IN GOOGLE SHEETS)
+    // =================================================================
+    const SESSION_KEY = "tlsm_portal_user_v2";
+    let authMode = "login"; // 'login' | 'register'
+    let currentUser = null;
+
+    async function hashPassword(password) {
+      if (window.crypto && window.crypto.subtle) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(password);
+        const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+      }
+      // Fallback hash if running over non-HTTPS local file
+      let hash = 0;
+      for (let i = 0; i < password.length; i++) {
+        hash = ((hash << 5) - hash) + password.charCodeAt(i);
+        hash |= 0;
+      }
+      return "gs_" + Math.abs(hash).toString(16);
+    }
+
+    function switchAuthMode(mode) {
+      authMode = mode;
+      hideAuthAlert();
+
+      const tabLogin = document.getElementById("tab-login");
+      const tabRegister = document.getElementById("tab-register");
+      const usernameCol = document.getElementById("username-field-col");
+      const emailCol = document.getElementById("email-field-col");
+      const passwordCol = document.getElementById("password-field-col");
+      const submitCol = document.getElementById("submit-field-col");
+      const submitText = document.getElementById("auth-submit-text");
+      const usernameInput = document.getElementById("auth-username");
+
+      if (mode === "register") {
+        tabLogin.classList.remove("active");
+        tabRegister.classList.add("active");
+        usernameCol.style.display = "block";
+        usernameInput.required = true;
+        emailCol.className = "col-md-3";
+        passwordCol.className = "col-md-3";
+        submitCol.className = "col-md-2";
+        submitText.innerText = "Register";
+      } else {
+        tabRegister.classList.remove("active");
+        tabLogin.classList.add("active");
+        usernameCol.style.display = "none";
+        usernameInput.required = false;
+        emailCol.className = "col-md-5";
+        passwordCol.className = "col-md-4";
+        submitCol.className = "col-md-3";
+        submitText.innerText = "Sign In";
+      }
+    }
+
+    function togglePasswordVisibility() {
+      const pwdInput = document.getElementById("auth-password");
+      const eyeIcon = document.getElementById("pwd-eye-icon");
+      if (pwdInput.type === "password") {
+        pwdInput.type = "text";
+        eyeIcon.className = "bi bi-eye-slash";
+      } else {
+        pwdInput.type = "password";
+        eyeIcon.className = "bi bi-eye";
+      }
+    }
+
+    function showAuthAlert(message, type = "danger") {
+      const alertBox = document.getElementById("auth-alert");
+      alertBox.className = `alert alert-${type} py-2 px-3 small fw-semibold mb-3`;
+      alertBox.innerHTML = message;
+      alertBox.style.display = "block";
+    }
+
+    function hideAuthAlert() {
+      const alertBox = document.getElementById("auth-alert");
+      alertBox.style.display = "none";
+    }
+
+    async function handleAuthSubmit(e) {
+      e.preventDefault();
+      hideAuthAlert();
+
+      if (GOOGLE_SCRIPT_URL === "https://script.google.com/macros/s/AKfycbxirOxL-mDWIW1n6eQf5leVfCUmF1DdtYKvUm13OPo_O0Oqmbt1wswpqVRShjrqvbxuww/exec") {
+        showAuthAlert("Developer Setup Required: Please configure the Google Apps Script Web App URL in the code.", "danger");
+        return;
+      }
+
+      const email = document.getElementById("auth-email").value.trim().toLowerCase();
+      const password = document.getElementById("auth-password").value;
+      const username = document.getElementById("auth-username").value.trim();
+
+      if (!email || !password) {
+        showAuthAlert("Please enter your email address and password.");
+        return;
+      }
+
+      if (authMode === "register" && !username) {
+        showAuthAlert("Please enter your full name or username.");
+        return;
+      }
+
+      const submitBtn = document.getElementById("auth-submit-btn");
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...`;
+
+      try {
+        const passwordHash = await hashPassword(password);
+        
+        const payload = {
+          action: authMode,
+          email: email,
+          username: username,
+          passwordHash: passwordHash
+        };
+
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify(payload),
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8' // Sent as text to bypass complex preflight CORS requirements
+          }
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          setLoggedInUser({ username: result.user.username, email: result.user.email });
+        } else {
+          showAuthAlert(result.message || "Authentication failed.", "danger");
+        }
+
+      } catch (err) {
+        console.error("Auth Error:", err);
+        showAuthAlert("Connection error. Please try again.");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i class="bi bi-box-arrow-in-right"></i> <span id="auth-submit-text">${authMode === 'register' ? 'Register' : 'Sign In'}</span>`;
+      }
+    }
+
+    function setLoggedInUser(user) {
+      currentUser = user;
+      localStorage.setItem(SESSION_KEY, JSON.stringify(user));
+      localStorage.setItem("tlsm_active_username", user.username);
+      localStorage.setItem("tlsm_active_email", user.email);
+      updateAuthUI();
+    }
+
+    function logoutUser() {
+      currentUser = null;
+      localStorage.removeItem(SESSION_KEY);
+      localStorage.removeItem("tlsm_active_username");
+      localStorage.removeItem("tlsm_active_email");
+      document.getElementById("auth-password").value = "";
+      updateAuthUI();
+    }
+
+    function updateAuthUI() {
+      const guestView = document.getElementById("auth-guest-view");
+      const loggedInView = document.getElementById("auth-logged-in-view");
+      const navBadgeText = document.getElementById("nav-badge-text");
+      const navLogoutBtn = document.getElementById("nav-logout-btn");
+      const launchButtons = document.querySelectorAll(".btn-launch");
+
+      if (currentUser) {
+        guestView.style.display = "none";
+        loggedInView.style.display = "block";
+        document.getElementById("profile-display-name").innerText = currentUser.username;
+        document.getElementById("profile-display-email").innerText = currentUser.email;
+
+        navBadgeText.innerText = currentUser.username;
+        navLogoutBtn.style.display = "inline-flex";
+
+        launchButtons.forEach(btn => {
+          btn.classList.remove("locked-state");
+        });
+      } else {
+        guestView.style.display = "block";
+        loggedInView.style.display = "none";
+
+        navBadgeText.innerText = "TLSM Arena";
+        navLogoutBtn.style.display = "none";
+
+        launchButtons.forEach(btn => {
+          btn.classList.add("locked-state");
+        });
+      }
+    }
+
+    function handleModuleLaunch(event, targetFile) {
+      if (!currentUser) {
+        event.preventDefault();
+        const authCard = document.getElementById("auth-card");
+        authCard.scrollIntoView({ behavior: "smooth", block: "center" });
+        authCard.classList.add("auth-highlight");
+        setTimeout(() => authCard.classList.remove("auth-highlight"), 1800);
+        showAuthAlert("<i class='bi bi-lock-fill me-1'></i> Please <strong>Sign In</strong> or <strong>Register</strong> with your Name, Email, and Password to launch this module.", "warning");
+        return false;
+      }
+
+      // Fire and forget log to Google Sheets Backend
+      if (GOOGLE_SCRIPT_URL !== "https://script.google.com/macros/s/AKfycbxirOxL-mDWIW1n6eQf5leVfCUmF1DdtYKvUm13OPo_O0Oqmbt1wswpqVRShjrqvbxuww/exec") {
+        fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify({
+            action: "log_launch",
+            module: targetFile,
+            username: currentUser.username,
+            email: currentUser.email
+          }),
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+        }).catch(err => console.log("Logging failed (ignored)", err));
+      }
+      return true;
+    }
+
+    // =================================================================
+    // 3. SEARCH / FILTER MODULES
+    // =================================================================
+    function filterModules() {
+      const query = document.getElementById("module-search").value.trim().toLowerCase();
+      const items = document.querySelectorAll(".module-item");
+      let visibleCount = 0;
+
+      items.forEach(item => {
+        const text = (item.innerText + " " + (item.dataset.keywords || "")).toLowerCase();
+        if (text.includes(query)) {
+          item.style.display = "";
+          visibleCount++;
+        } else {
+          item.style.display = "none";
+        }
+      });
+
+      document.getElementById("module-count-label").innerText =
+        visibleCount === items.length
+          ? `Showing all ${items.length} TLSM modules`
+          : `Showing ${visibleCount} of ${items.length} modules`;
+
+      document.getElementById("no-results-box").style.display = visibleCount === 0 ? "block" : "none";
+    }
+
+    function resetSearch() {
+      document.getElementById("module-search").value = "";
+      filterModules();
+    }
+
+    // Restore saved session on page load
+    window.addEventListener("DOMContentLoaded", () => {
+      try {
+        const saved = localStorage.getItem(SESSION_KEY);
+        if (saved) {
+          currentUser = JSON.parse(saved);
+        }
+      } catch (e) {
+        currentUser = null;
+      }
+      updateAuthUI();
+    });
+  </script>
+
+</body>
+</html>
