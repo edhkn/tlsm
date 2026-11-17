@@ -387,7 +387,7 @@
       <p class="text-muted small mb-0">15 Core Trauma Modules • Live Multiplayer & Self-Paced Solo Practice</p>
     </div>
 
-    <!-- Trainee Authentication Card -->
+    <!-- Trainee Authentication Card (Google Sheets Backend) -->
     <div class="card-shell mb-3" id="auth-card">
       <!-- Signed-Out View -->
       <div id="auth-guest-view">
@@ -867,7 +867,7 @@
       e.preventDefault();
       hideAuthAlert();
 
-      if (GOOGLE_SCRIPT_URL === "https://script.google.com/macros/s/AKfycbxirOxL-mDWIW1n6eQf5leVfCUmF1DdtYKvUm13OPo_O0Oqmbt1wswpqVRShjrqvbxuww/exec") {
+      if (GOOGLE_SCRIPT_URL === "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE") {
         showAuthAlert("Developer Setup Required: Please configure the Google Apps Script Web App URL in the code.", "danger");
         return;
       }
@@ -917,8 +917,8 @@
         }
 
       } catch (err) {
-        console.error("Auth Error:", err);
-        showAuthAlert("Connection error. Please try again.");
+        console.error("Google Sheets Auth Error:", err);
+        showAuthAlert("Connection error to Google Sheets backend. Please try again.");
       } finally {
         submitBtn.disabled = false;
         submitBtn.innerHTML = `<i class="bi bi-box-arrow-in-right"></i> <span id="auth-submit-text">${authMode === 'register' ? 'Register' : 'Sign In'}</span>`;
@@ -986,7 +986,7 @@
       }
 
       // Fire and forget log to Google Sheets Backend
-      if (GOOGLE_SCRIPT_URL !== "https://script.google.com/macros/s/AKfycbxirOxL-mDWIW1n6eQf5leVfCUmF1DdtYKvUm13OPo_O0Oqmbt1wswpqVRShjrqvbxuww/exec") {
+      if (GOOGLE_SCRIPT_URL !== "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE") {
         fetch(GOOGLE_SCRIPT_URL, {
           method: 'POST',
           body: JSON.stringify({
