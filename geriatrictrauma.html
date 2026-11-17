@@ -79,6 +79,7 @@
 
         .input-group { margin: 18px 0; text-align: left; }
         .input-group label { display: block; font-size: 0.85rem; font-weight: 800; margin-bottom: 8px; color: #e5d4fc; text-transform: uppercase; }
+        .input-group label span { font-size: 0.72rem; color: #9d85c4; font-weight: 600; text-transform: none; }
         .text-input {
             width: 100%; padding: 18px; font-size: 1.2rem; font-weight: 700; color: #fff;
             background: rgba(0, 0, 0, 0.25);
@@ -90,7 +91,7 @@
         .btn-row { display: flex; gap: 15px; margin-top: 25px; }
         .btn-main {
             flex: 1; color: #fff; border: none;
-            padding: 18px 24px; font-size: 1.2rem; font-weight: 800; text-transform: uppercase;
+            padding: 18px 24px; font-size: 1.15rem; font-weight: 800; text-transform: uppercase;
             border-radius: 12px; cursor: pointer; 
             background: linear-gradient(135deg, #00b09b, #96c93d);
             box-shadow: 0 8px 20px rgba(0, 176, 155, 0.4);
@@ -100,6 +101,23 @@
         .btn-main:active { transform: translateY(2px); }
         
         .btn-host { background: linear-gradient(135deg, #f12711, #f5af19); box-shadow: 0 8px 20px rgba(241, 39, 17, 0.4); }
+        .btn-host:hover { box-shadow: 0 12px 25px rgba(241, 39, 17, 0.6); }
+
+        .btn-solo {
+            width: 100%;
+            background: linear-gradient(135deg, #7928ca, #ff0080);
+            box-shadow: 0 8px 20px rgba(121, 40, 202, 0.45);
+        }
+        .btn-solo:hover { box-shadow: 0 12px 25px rgba(255, 0, 128, 0.6); }
+
+        .mode-divider {
+            display: flex; align-items: center; gap: 14px;
+            margin: 22px 0 16px; color: #bca0e6;
+            font-size: 0.8rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;
+        }
+        .mode-divider::before, .mode-divider::after {
+            content: ""; flex: 1; height: 1px; background: rgba(255, 255, 255, 0.18);
+        }
 
         /* Lobby & QR Code Section */
         .pin-pill {
@@ -188,6 +206,11 @@
             background: linear-gradient(135deg, #f9d423, #ff4e50);
             box-shadow: 0 0 20px rgba(249, 212, 35, 0.7);
         }
+        .timer-selfpaced {
+            background: linear-gradient(135deg, #7928ca, #ff0080);
+            box-shadow: 0 0 20px rgba(255, 0, 128, 0.65);
+            font-size: 1.8rem;
+        }
         #question-text { font-size: 1.45rem; font-weight: 800; line-height: 1.4; }
 
         /* Preview Banner */
@@ -240,7 +263,14 @@
         .wrong-bg { background: linear-gradient(135deg, #ff416c, #ff4b2b); }
         .host-reveal-bg { background: linear-gradient(135deg, #302b63, #46178f); border: 2px solid #00e096; }
 
-        /* Podium */
+        .btn-feedback-next {
+            background: #ffffff; color: #1a0b2e;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+            width: 100%; max-width: 360px; margin-top: 24px;
+        }
+        .btn-feedback-next:hover { background: #f3eaff; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45); }
+
+        /* Podium & Solo Summary */
         .podium-wrap { display: flex; justify-content: center; align-items: flex-end; gap: 15px; margin: 30px 0 20px; height: 210px; }
         .podium-col {
             width: 30%; border-radius: 12px 12px 0 0; display: flex;
@@ -252,10 +282,23 @@
         .pod-3 { height: 55%; background: linear-gradient(to top, #e65c00, #F9D423); }
         .medal { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); font-size: 2.2rem; }
 
+        .solo-stats-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+            margin: 22px 0;
+        }
+        .solo-stat-box {
+            background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 16px; padding: 18px 12px;
+        }
+        .solo-stat-val { font-size: 1.7rem; font-weight: 900; color: #00e096; }
+        .solo-stat-lbl { font-size: 0.78rem; font-weight: 700; color: #d1b8f7; text-transform: uppercase; margin-top: 4px; }
+
         .winner-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; margin-top: 15px; }
-        .winner-table th { background: rgba(255,255,255,0.1); color: #fff; padding: 12px; font-size: 0.95rem; text-align: left; }
-        .winner-table td { padding: 12px; background: rgba(255,255,255,0.06); text-align: left; font-weight: 700; color: #fff; }
+        .winner-table th { background: rgba(255,255,255,0.12); color: #fff; padding: 12px; font-size: 0.9rem; text-align: left; }
+        .winner-table td { padding: 12px; background: rgba(255,255,255,0.06); text-align: left; font-weight: 700; color: #fff; font-size: 0.9rem; vertical-align: top; }
         .my-row td { background: rgba(0,224,150,0.2) !important; color: #00e096; font-weight: 900; }
+        .review-wrong td { background: rgba(255, 65, 108, 0.16) !important; border-left: 3px solid #ff416c; }
+        .review-correct td { background: rgba(0, 224, 150, 0.12) !important; border-left: 3px solid #00e096; }
 
         /* --- KAKI HALAMAN (FOOTER) --- */
         footer {
@@ -288,6 +331,7 @@
             .logo { font-size: 2.3rem; }
             #question-text { font-size: 1.2rem; }
             .btn-row { flex-direction: column; }
+            .solo-stats-grid { grid-template-columns: 1fr; }
             
             .footer-container { flex-direction: column; gap: 10px; }
             .footer-copyright { margin-top: 4px; text-align: center; }
@@ -314,10 +358,10 @@
     <div id="login-screen" class="screen active">
         <div class="card">
             <div class="logo">TLSM ARENA</div>
-            <div class="subtitle">Geriatric Trauma • Live Edition</div>
+            <div class="subtitle">Geriatric Trauma • Live & Self-Paced Edition</div>
             
             <div class="input-group">
-                <label>Room PIN / Quiz ID</label>
+                <label>Room PIN / Quiz ID <span>(Live Mode only)</span></label>
                 <input type="text" id="pin-input" class="text-input" placeholder="e.g. GERIATRIC26" maxlength="12">
             </div>
             
@@ -327,9 +371,13 @@
             </div>
 
             <div class="btn-row">
-                <button class="btn-main" onclick="joinAsPlayer()">Join as Player</button>
-                <button class="btn-main btn-host" onclick="startAsHost()">Host on Main Screen</button>
+                <button class="btn-main" onclick="joinAsPlayer()">Join Live Room</button>
+                <button class="btn-main btn-host" onclick="startAsHost()">Host Live Screen</button>
             </div>
+
+            <div class="mode-divider">Or Practice at Your Own Pace</div>
+
+            <button class="btn-main btn-solo" onclick="startSelfPaced()">🎯 Self-Paced Mode (Solo)</button>
         </div>
     </div>
 
@@ -379,12 +427,12 @@
             <div id="question-text">Loading question...</div>
         </div>
 
-        <!-- 5-Second Question Preview Notice -->
+        <!-- 5-Second Question Preview Notice (Live Mode) -->
         <div id="preview-box">
             <div class="preview-text">📖 Read the question carefully... Options appearing shortly!</div>
         </div>
 
-        <!-- 20-Second Options Grid -->
+        <!-- Options Grid -->
         <div class="options-grid" id="options-container"></div>
         <div id="player-submitted-banner">Answer Submitted! 🔒 Waiting for other players...</div>
     </div>
@@ -397,20 +445,27 @@
             <br>
             <h2 id="feedback-points" style="font-size: 2.2rem; margin-top: 18px;">+0 pts</h2>
 
+            <!-- Host Controls (Live Mode) -->
             <div id="host-feedback-controls" style="display: none; margin-top: 25px;">
                 <p id="auto-advance-msg" style="color: #ffd700; margin-bottom: 10px; font-weight: 800;">Auto-advancing in 5s...</p>
                 <button class="btn-main" onclick="hostNextQuestion()" style="width: 100%; max-width: 350px;">Next Question ▶</button>
             </div>
+
+            <!-- Solo Player Controls (Self-Paced Mode) -->
+            <div id="solo-feedback-controls" style="display: none;">
+                <button class="btn-main btn-feedback-next" id="solo-next-btn" onclick="selfPacedNextQuestion()">Next Question ▶</button>
+            </div>
         </div>
     </div>
 
-    <!-- SCREEN 5: FINAL PODIUM -->
+    <!-- SCREEN 5: FINAL PODIUM / SOLO SUMMARY -->
     <div id="end-screen" class="screen">
         <div class="card" style="padding: 35px 20px;">
-            <div class="logo" style="font-size: 2.8rem;">FINAL PODIUM</div>
+            <div class="logo" id="end-screen-title" style="font-size: 2.8rem;">FINAL PODIUM</div>
             <div class="subtitle" id="winner-room-tag">TLSM: Geriatric Trauma</div>
 
-            <div class="podium-wrap">
+            <!-- Multiplayer Podium -->
+            <div class="podium-wrap" id="multiplayer-podium-wrap">
                 <div class="podium-col pod-2">
                     <div class="medal">🥈</div>
                     <div id="p2-name">-</div>
@@ -428,8 +483,24 @@
                 </div>
             </div>
 
+            <!-- Self-Paced Solo Summary Stats -->
+            <div class="solo-stats-grid" id="solo-summary-stats" style="display: none;">
+                <div class="solo-stat-box">
+                    <div class="solo-stat-val" id="solo-final-score">0</div>
+                    <div class="solo-stat-lbl">Total Points</div>
+                </div>
+                <div class="solo-stat-box">
+                    <div class="solo-stat-val" id="solo-correct-count">0/20</div>
+                    <div class="solo-stat-lbl">Correct Answers</div>
+                </div>
+                <div class="solo-stat-box">
+                    <div class="solo-stat-val" id="solo-accuracy-pct">0%</div>
+                    <div class="solo-stat-lbl">Accuracy</div>
+                </div>
+            </div>
+
             <table class="winner-table">
-                <thead>
+                <thead id="end-table-head">
                     <tr>
                         <th style="width: 15%;">Rank</th>
                         <th>Player Name</th>
@@ -439,7 +510,10 @@
                 <tbody id="leaderboard-tbody"></tbody>
             </table>
 
-            <button class="btn-main" onclick="location.reload()" style="margin-top: 30px; width: 100%;">Exit to Home</button>
+            <div class="btn-row" style="margin-top: 30px;">
+                <button class="btn-main btn-solo" id="solo-replay-btn" onclick="startSelfPaced()" style="display: none;">🔄 Play Again</button>
+                <button class="btn-main" onclick="location.reload()">Exit to Home</button>
+            </div>
         </div>
     </div>
 
@@ -563,14 +637,15 @@
                     this.playTone(220, 'sawtooth', 0.25, 0.3, 110);
                 }
             },
-            stopMusic() { if (this.timer) { clearInterval(this.timer); this.timer = null; } }
+            stopMusic() { if (this.timer) { clearInterval(this.timer); this.timer = null; } this.mode = 'none'; }
         };
 
         function toggleAudio() {
             SoundTrack.init(); SoundTrack.muted = !SoundTrack.muted;
             document.getElementById('audio-btn').innerText = SoundTrack.muted ? "🔇 Sound OFF" : "🔊 Sound ON";
-            if (SoundTrack.muted) SoundTrack.stopMusic();
-            else { 
+            if (SoundTrack.muted) {
+                if (SoundTrack.timer) { clearInterval(SoundTrack.timer); SoundTrack.timer = null; }
+            } else { 
                 if (SoundTrack.mode === 'lobby') SoundTrack.startLobbyMusic(); 
                 if (SoundTrack.mode === 'preview') SoundTrack.startPreviewTone();
                 if (SoundTrack.mode === 'game') SoundTrack.startGameMusic(); 
@@ -792,9 +867,10 @@
         ];
 
         // =================================================================
-        // 4. MULTIPLAYER ENGINE WITH DYNAMIC TIME-BASED SCORING
+        // 4. GAME ENGINE (MULTIPLAYER + SELF-PACED SOLO)
         // =================================================================
         let isHost = false;
+        let isSelfPaced = false;
         let roomPin = "";
         let myId = "usr_" + Math.random().toString(36).substring(2, 9);
         let myName = "";
@@ -802,6 +878,7 @@
         let myScore = 0;
         let myChoiceThisRound = null;
         let roundEarnedPoints = 0; 
+        let selfPacedHistory = [];
         let previewCountdown = null;
         let timerCountdown = null;
         let autoAdvanceCountdown = null;
@@ -816,16 +893,39 @@
             document.getElementById(id).classList.add('active');
         }
 
-        // Join as Player
+        // Start Self-Paced Solo Mode
+        function startSelfPaced() {
+            const name = document.getElementById('name-input').value.trim();
+            isHost = false;
+            isSelfPaced = true;
+            myName = name || "Solo Trainee";
+            myScore = 0;
+            currentQIndex = 0;
+            selfPacedHistory = [];
+
+            document.getElementById('player-hud-name').innerText = myName;
+            document.getElementById('score-hud').style.display = "inline-block";
+            document.getElementById('answers-counter').style.display = "none";
+
+            SoundTrack.init();
+            renderQuestion(0);
+        }
+
+        // Join as Player (Live Multiplayer)
         function joinAsPlayer() {
             const pin = document.getElementById('pin-input').value.trim().toUpperCase();
             const name = document.getElementById('name-input').value.trim();
             if (!pin || !name) { alert("Please enter both Room PIN and Nickname!"); return; }
 
             isHost = false;
+            isSelfPaced = false;
             roomPin = pin;
             myName = name;
+            myScore = 0;
+            currentQIndex = -1;
             document.getElementById('player-hud-name').innerText = myName;
+            document.getElementById('score-hud').style.display = "inline-block";
+            document.getElementById('answers-counter').style.display = "none";
 
             SoundTrack.startLobbyMusic();
             showScreen('lobby-screen');
@@ -840,12 +940,14 @@
             }
         }
 
-        // Host on Main Screen
+        // Host on Main Screen (Live Multiplayer)
         function startAsHost() {
             const pin = document.getElementById('pin-input').value.trim().toUpperCase() || "GERIATRIC" + Math.floor(100 + Math.random() * 900);
             isHost = true;
+            isSelfPaced = false;
             roomPin = pin;
             myName = "HOST";
+            currentQIndex = -1;
             document.getElementById('player-hud-name').innerText = "HOST VIEW";
             document.getElementById('score-hud').style.display = "none";
             document.getElementById('answers-counter').style.display = "inline-block";
@@ -878,9 +980,9 @@
             }
         }
 
-        // Real-time synchronization
+        // Real-time synchronization (Live Multiplayer)
         function listenToRoomState() {
-            if (!db) return;
+            if (!db || isSelfPaced) return;
 
             db.ref(`rooms/${roomPin}/players`).on('value', snap => {
                 const players = snap.val() || {};
@@ -956,7 +1058,7 @@
 
             const q = quizData[idx];
             document.getElementById('q-counter').innerText = `Q: ${idx + 1}/${quizData.length}`;
-            if (!isHost) document.getElementById('score-hud').innerText = `Score: ${myScore}`;
+            if (!isHost) document.getElementById('score-hud').innerText = `Score: ${myScore.toLocaleString()}`;
             document.getElementById('question-text').innerText = q.q;
             document.getElementById('player-submitted-banner').style.display = "none";
 
@@ -965,18 +1067,6 @@
             const livePtsBadge = document.getElementById('live-points-badge');
             const previewBox = document.getElementById('preview-box');
             const container = document.getElementById('options-container');
-
-            timerEl.classList.add('timer-preview');
-            phaseBadge.innerText = "Read Question";
-            phaseBadge.style.background = "#ffd700";
-            phaseBadge.style.color = "#1a0b2e";
-            livePtsBadge.style.display = "none";
-            previewBox.style.display = "block";
-            container.style.display = "none";
-
-            if (isHost) {
-                document.getElementById('answers-counter').innerText = `Answers: 0/${totalPlayerCount}`;
-            }
 
             container.innerHTML = '';
             container.classList.remove('disabled-grid');
@@ -999,6 +1089,50 @@
                     container.appendChild(btn);
                 }
             });
+
+            // SELF-PACED MODE: Skip 5-sec preview lockout & remove forced timeout
+            if (isSelfPaced) {
+                isAnsweringPhase = true;
+                answerPhaseStartTime = Date.now();
+
+                previewBox.style.display = "none";
+                container.style.display = "grid";
+
+                timerEl.classList.remove('timer-preview');
+                timerEl.classList.add('timer-selfpaced');
+                timerEl.innerText = "∞";
+
+                phaseBadge.innerText = "Self-Paced";
+                phaseBadge.style.background = "linear-gradient(135deg, #7928ca, #ff0080)";
+                phaseBadge.style.color = "#fff";
+
+                livePtsBadge.style.display = "inline-block";
+                livePtsBadge.innerText = "⚡ 1,000 pts";
+
+                liveScoreInterval = setInterval(() => {
+                    if (!isAnsweringPhase || myChoiceThisRound !== null) return;
+                    const elapsedMs = Math.max(0, Date.now() - answerPhaseStartTime);
+                    const currentPotential = Math.max(500, Math.round(1000 - (500 * (elapsedMs / 20000))));
+                    livePtsBadge.innerText = `⚡ ${currentPotential.toLocaleString()} pts`;
+                }, 50);
+
+                SoundTrack.playPopSfx();
+                return;
+            }
+
+            // LIVE MULTIPLAYER MODE: 5-second preview phase
+            timerEl.classList.remove('timer-selfpaced');
+            timerEl.classList.add('timer-preview');
+            phaseBadge.innerText = "Read Question";
+            phaseBadge.style.background = "#ffd700";
+            phaseBadge.style.color = "#1a0b2e";
+            livePtsBadge.style.display = "none";
+            previewBox.style.display = "block";
+            container.style.display = "none";
+
+            if (isHost) {
+                document.getElementById('answers-counter').innerText = `Answers: 0/${totalPlayerCount}`;
+            }
 
             let previewSeconds = 5;
             timerEl.innerText = previewSeconds;
@@ -1046,7 +1180,7 @@
 
             SoundTrack.playPopSfx();
             setTimeout(() => {
-                if (isAnsweringPhase) SoundTrack.startGameMusic();
+                if (isAnsweringPhase && !isSelfPaced) SoundTrack.startGameMusic();
             }, 300);
 
             secondsLeft = 20;
@@ -1073,20 +1207,39 @@
             clearInterval(liveScoreInterval);
 
             const responseTimeMs = Math.max(0, Date.now() - answerPhaseStartTime);
-            
-            document.getElementById('options-container').classList.add('disabled-grid');
-            document.getElementById('player-submitted-banner').style.display = "block";
-
             const q = quizData[currentQIndex];
-            if (choice === q.correct) {
+            const isCorrect = (choice === q.correct);
+
+            if (isCorrect) {
                 const decayRatio = Math.min(1, responseTimeMs / 20000);
                 roundEarnedPoints = Math.max(500, Math.round(1000 - (500 * decayRatio)));
                 myScore += roundEarnedPoints;
+            } else {
+                roundEarnedPoints = 0;
+            }
 
+            // SELF-PACED MODE: Record history & jump straight to feedback
+            if (isSelfPaced) {
+                selfPacedHistory.push({
+                    qNum: currentQIndex + 1,
+                    question: q.q,
+                    userAnswer: q.options[choice - 1],
+                    correctAnswer: q.options[q.correct - 1],
+                    isCorrect: isCorrect,
+                    points: roundEarnedPoints
+                });
+                renderFeedbackScreen();
+                return;
+            }
+
+            // LIVE MULTIPLAYER MODE: Lock UI & sync with Firebase
+            document.getElementById('options-container').classList.add('disabled-grid');
+            document.getElementById('player-submitted-banner').style.display = "block";
+
+            if (isCorrect) {
                 document.getElementById('live-points-badge').innerText = `⚡ +${roundEarnedPoints} pts (Locked)`;
                 if (db) db.ref(`rooms/${roomPin}/players/${myId}`).update({ score: myScore });
             } else {
-                roundEarnedPoints = 0;
                 document.getElementById('live-points-badge').innerText = `⚡ 0 pts`;
             }
 
@@ -1114,6 +1267,7 @@
             const ansText = document.getElementById('correct-answer-text');
             const ptsText = document.getElementById('feedback-points');
             const hostControls = document.getElementById('host-feedback-controls');
+            const soloControls = document.getElementById('solo-feedback-controls');
 
             ansText.innerText = `Correct Answer: ${q.options[q.correct - 1]}`;
 
@@ -1122,6 +1276,7 @@
                 title.innerText = "Round Completed!";
                 ptsText.style.display = "none";
                 hostControls.style.display = "block";
+                soloControls.style.display = "none";
 
                 let autoSeconds = 5;
                 const autoMsg = document.getElementById('auto-advance-msg');
@@ -1142,6 +1297,16 @@
                 ptsText.style.display = "inline-block";
                 hostControls.style.display = "none";
 
+                if (isSelfPaced) {
+                    soloControls.style.display = "block";
+                    const nextBtn = document.getElementById('solo-next-btn');
+                    nextBtn.innerText = (currentQIndex + 1 < quizData.length)
+                        ? "Next Question ▶"
+                        : "Finish & View Summary 🏆";
+                } else {
+                    soloControls.style.display = "none";
+                }
+
                 if (myChoiceThisRound === q.correct) {
                     banner.className = 'card feedback-banner correct-bg';
                     title.innerText = "Correct!";
@@ -1161,6 +1326,17 @@
             }
         }
 
+        function selfPacedNextQuestion() {
+            if (!isSelfPaced) return;
+            if (currentQIndex + 1 < quizData.length) {
+                currentQIndex++;
+                renderQuestion(currentQIndex);
+            } else {
+                SoundTrack.startPodiumFanfare();
+                showSoloSummary();
+            }
+        }
+
         function hostNextQuestion() {
             clearInterval(autoAdvanceCountdown);
             if (!db) return;
@@ -1176,9 +1352,63 @@
             }
         }
 
+        function showSoloSummary() {
+            showScreen('end-screen');
+            document.getElementById('end-screen-title').innerText = "SELF-PACED SUMMARY";
+            document.getElementById('winner-room-tag').innerText = `Trainee: ${myName}`;
+
+            document.getElementById('multiplayer-podium-wrap').style.display = "none";
+            document.getElementById('solo-summary-stats').style.display = "grid";
+            document.getElementById('solo-replay-btn').style.display = "inline-block";
+
+            const correctCount = selfPacedHistory.filter(h => h.isCorrect).length;
+            const accuracyPct = Math.round((correctCount / quizData.length) * 100);
+
+            document.getElementById('solo-final-score').innerText = myScore.toLocaleString();
+            document.getElementById('solo-correct-count').innerText = `${correctCount} / ${quizData.length}`;
+            document.getElementById('solo-accuracy-pct').innerText = `${accuracyPct}%`;
+
+            document.getElementById('end-table-head').innerHTML = `
+                <tr>
+                    <th style="width: 8%;">#</th>
+                    <th style="width: 42%;">Question</th>
+                    <th style="width: 25%;">Your Answer</th>
+                    <th style="width: 25%;">Correct Answer</th>
+                </tr>
+            `;
+
+            const tbody = document.getElementById('leaderboard-tbody');
+            tbody.innerHTML = '';
+            selfPacedHistory.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = item.isCorrect ? 'review-correct' : 'review-wrong';
+                tr.innerHTML = `
+                    <td><strong>${item.qNum}</strong></td>
+                    <td>${escapeHtml(item.question)}</td>
+                    <td>${item.isCorrect ? '✅' : '❌'} ${escapeHtml(item.userAnswer)}</td>
+                    <td style="color: #00e096;">${escapeHtml(item.correctAnswer)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
         function showPodium() {
             showScreen('end-screen');
+            document.getElementById('end-screen-title').innerText = "FINAL PODIUM";
             document.getElementById('winner-room-tag').innerText = `Room PIN: ${roomPin}`;
+
+            document.getElementById('multiplayer-podium-wrap').style.display = "flex";
+            document.getElementById('solo-summary-stats').style.display = "none";
+            document.getElementById('solo-replay-btn').style.display = "none";
+
+            document.getElementById('end-table-head').innerHTML = `
+                <tr>
+                    <th style="width: 15%;">Rank</th>
+                    <th>Player Name</th>
+                    <th style="width: 25%;">Score</th>
+                </tr>
+            `;
+
             if (!db) return;
 
             db.ref(`rooms/${roomPin}/players`).once('value', snap => {
