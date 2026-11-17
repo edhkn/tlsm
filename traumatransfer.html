@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TLSM: Transfer to Definitive Care — Live Arena</title>
+    <title>TLSM Ch 4: Thoracic Trauma — Live Arena</title>
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -79,6 +79,7 @@
 
         .input-group { margin: 18px 0; text-align: left; }
         .input-group label { display: block; font-size: 0.85rem; font-weight: 800; margin-bottom: 8px; color: #e5d4fc; text-transform: uppercase; }
+        .input-group label span { font-size: 0.72rem; color: #9d85c4; font-weight: 600; text-transform: none; }
         .text-input {
             width: 100%; padding: 18px; font-size: 1.2rem; font-weight: 700; color: #fff;
             background: rgba(0, 0, 0, 0.25);
@@ -90,7 +91,7 @@
         .btn-row { display: flex; gap: 15px; margin-top: 25px; }
         .btn-main {
             flex: 1; color: #fff; border: none;
-            padding: 18px 24px; font-size: 1.2rem; font-weight: 800; text-transform: uppercase;
+            padding: 18px 24px; font-size: 1.15rem; font-weight: 800; text-transform: uppercase;
             border-radius: 12px; cursor: pointer; 
             background: linear-gradient(135deg, #00b09b, #96c93d);
             box-shadow: 0 8px 20px rgba(0, 176, 155, 0.4);
@@ -100,6 +101,23 @@
         .btn-main:active { transform: translateY(2px); }
         
         .btn-host { background: linear-gradient(135deg, #f12711, #f5af19); box-shadow: 0 8px 20px rgba(241, 39, 17, 0.4); }
+        .btn-host:hover { box-shadow: 0 12px 25px rgba(241, 39, 17, 0.6); }
+
+        .btn-solo {
+            width: 100%;
+            background: linear-gradient(135deg, #7928ca, #ff0080);
+            box-shadow: 0 8px 20px rgba(121, 40, 202, 0.45);
+        }
+        .btn-solo:hover { box-shadow: 0 12px 25px rgba(255, 0, 128, 0.6); }
+
+        .mode-divider {
+            display: flex; align-items: center; gap: 14px;
+            margin: 22px 0 16px; color: #bca0e6;
+            font-size: 0.8rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;
+        }
+        .mode-divider::before, .mode-divider::after {
+            content: ""; flex: 1; height: 1px; background: rgba(255, 255, 255, 0.18);
+        }
 
         /* Lobby & QR Code Section */
         .pin-pill {
@@ -188,6 +206,11 @@
             background: linear-gradient(135deg, #f9d423, #ff4e50);
             box-shadow: 0 0 20px rgba(249, 212, 35, 0.7);
         }
+        .timer-selfpaced {
+            background: linear-gradient(135deg, #7928ca, #ff0080);
+            box-shadow: 0 0 20px rgba(255, 0, 128, 0.65);
+            font-size: 1.8rem;
+        }
         #question-text { font-size: 1.45rem; font-weight: 800; line-height: 1.4; }
 
         /* Preview Banner */
@@ -240,7 +263,14 @@
         .wrong-bg { background: linear-gradient(135deg, #ff416c, #ff4b2b); }
         .host-reveal-bg { background: linear-gradient(135deg, #302b63, #46178f); border: 2px solid #00e096; }
 
-        /* Podium */
+        .btn-feedback-next {
+            background: #ffffff; color: #1a0b2e;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+            width: 100%; max-width: 360px; margin-top: 24px;
+        }
+        .btn-feedback-next:hover { background: #f3eaff; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45); }
+
+        /* Podium & Solo Summary */
         .podium-wrap { display: flex; justify-content: center; align-items: flex-end; gap: 15px; margin: 30px 0 20px; height: 210px; }
         .podium-col {
             width: 30%; border-radius: 12px 12px 0 0; display: flex;
@@ -252,10 +282,23 @@
         .pod-3 { height: 55%; background: linear-gradient(to top, #e65c00, #F9D423); }
         .medal { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); font-size: 2.2rem; }
 
+        .solo-stats-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+            margin: 22px 0;
+        }
+        .solo-stat-box {
+            background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 16px; padding: 18px 12px;
+        }
+        .solo-stat-val { font-size: 1.7rem; font-weight: 900; color: #00e096; }
+        .solo-stat-lbl { font-size: 0.78rem; font-weight: 700; color: #d1b8f7; text-transform: uppercase; margin-top: 4px; }
+
         .winner-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; margin-top: 15px; }
-        .winner-table th { background: rgba(255,255,255,0.1); color: #fff; padding: 12px; font-size: 0.95rem; text-align: left; }
-        .winner-table td { padding: 12px; background: rgba(255,255,255,0.06); text-align: left; font-weight: 700; color: #fff; }
+        .winner-table th { background: rgba(255,255,255,0.12); color: #fff; padding: 12px; font-size: 0.9rem; text-align: left; }
+        .winner-table td { padding: 12px; background: rgba(255,255,255,0.06); text-align: left; font-weight: 700; color: #fff; font-size: 0.9rem; vertical-align: top; }
         .my-row td { background: rgba(0,224,150,0.2) !important; color: #00e096; font-weight: 900; }
+        .review-wrong td { background: rgba(255, 65, 108, 0.16) !important; border-left: 3px solid #ff416c; }
+        .review-correct td { background: rgba(0, 224, 150, 0.12) !important; border-left: 3px solid #00e096; }
 
         /* --- KAKI HALAMAN (FOOTER) --- */
         footer {
@@ -276,6 +319,7 @@
         .footer-copyright { font-size: 0.85rem; font-weight: 600; color: rgba(255, 255, 255, 0.6); }
         .footer-copyright span { color: #00e096; font-weight: 800; }
 
+        /* Responsive Media Queries */
         @media (max-width: 768px) {
             nav { top: 10px; left: 10px; padding: 6px 16px; }
             .dept-logo { width: 30px; height: 30px; }
@@ -288,6 +332,7 @@
             .logo { font-size: 2.3rem; }
             #question-text { font-size: 1.2rem; }
             .btn-row { flex-direction: column; }
+            .solo-stats-grid { grid-template-columns: 1fr; }
             
             .footer-container { flex-direction: column; gap: 10px; }
             .footer-copyright { margin-top: 4px; text-align: center; }
@@ -314,11 +359,11 @@
     <div id="login-screen" class="screen active">
         <div class="card">
             <div class="logo">TLSM ARENA</div>
-            <div class="subtitle">Transfer to Definitive Care • Live Edition</div>
+            <div class="subtitle">Chapter 4: Thoracic Trauma • Live & Self-Paced Edition</div>
             
             <div class="input-group">
-                <label>Room PIN / Quiz ID</label>
-                <input type="text" id="pin-input" class="text-input" placeholder="e.g. TRANSFER26" maxlength="12">
+                <label>Room PIN / Quiz ID <span>(Live Mode only)</span></label>
+                <input type="text" id="pin-input" class="text-input" placeholder="e.g. CHEST4" maxlength="12">
             </div>
             
             <div class="input-group" id="nick-group">
@@ -327,9 +372,13 @@
             </div>
 
             <div class="btn-row">
-                <button class="btn-main" onclick="joinAsPlayer()">Join as Player</button>
-                <button class="btn-main btn-host" onclick="startAsHost()">Host on Main Screen</button>
+                <button class="btn-main" onclick="joinAsPlayer()">Join Live Room</button>
+                <button class="btn-main btn-host" onclick="startAsHost()">Host Live Screen</button>
             </div>
+
+            <div class="mode-divider">Or Practice at Your Own Pace</div>
+
+            <button class="btn-main btn-solo" onclick="startSelfPaced()">🎯 Self-Paced Mode (Solo)</button>
         </div>
     </div>
 
@@ -346,7 +395,7 @@
                     <img id="host-qr-image" src="" alt="Scan to Join">
                 </div>
                 <div class="qr-scan-label">📷 Scan to Join Instantly</div>
-                <div class="qr-url-link" id="qr-url-text">https://edhkn.github.io/tlsm/transfer.html</div>
+                <div class="qr-url-link">https://edhkn.github.io/tlsm/thoracic.html</div>
             </div>
 
             <div id="player-waiting-spinner" style="display: none; padding: 15px 0;">
@@ -379,12 +428,12 @@
             <div id="question-text">Loading question...</div>
         </div>
 
-        <!-- 5-Second Question Preview Notice -->
+        <!-- 5-Second Question Preview Notice (Live Mode) -->
         <div id="preview-box">
             <div class="preview-text">📖 Read the question carefully... Options appearing shortly!</div>
         </div>
 
-        <!-- 20-Second Options Grid -->
+        <!-- Options Grid -->
         <div class="options-grid" id="options-container"></div>
         <div id="player-submitted-banner">Answer Submitted! 🔒 Waiting for other players...</div>
     </div>
@@ -397,20 +446,27 @@
             <br>
             <h2 id="feedback-points" style="font-size: 2.2rem; margin-top: 18px;">+0 pts</h2>
 
+            <!-- Host Controls (Live Mode) -->
             <div id="host-feedback-controls" style="display: none; margin-top: 25px;">
                 <p id="auto-advance-msg" style="color: #ffd700; margin-bottom: 10px; font-weight: 800;">Auto-advancing in 5s...</p>
                 <button class="btn-main" onclick="hostNextQuestion()" style="width: 100%; max-width: 350px;">Next Question ▶</button>
             </div>
+
+            <!-- Solo Player Controls (Self-Paced Mode) -->
+            <div id="solo-feedback-controls" style="display: none;">
+                <button class="btn-main btn-feedback-next" id="solo-next-btn" onclick="selfPacedNextQuestion()">Next Question ▶</button>
+            </div>
         </div>
     </div>
 
-    <!-- SCREEN 5: FINAL PODIUM -->
+    <!-- SCREEN 5: FINAL PODIUM / SOLO SUMMARY -->
     <div id="end-screen" class="screen">
         <div class="card" style="padding: 35px 20px;">
-            <div class="logo" style="font-size: 2.8rem;">FINAL PODIUM</div>
-            <div class="subtitle" id="winner-room-tag">TLSM: Transfer to Definitive Care</div>
+            <div class="logo" id="end-screen-title" style="font-size: 2.8rem;">FINAL PODIUM</div>
+            <div class="subtitle" id="winner-room-tag">TLSM Chapter 4: Thoracic Trauma</div>
 
-            <div class="podium-wrap">
+            <!-- Multiplayer Podium -->
+            <div class="podium-wrap" id="multiplayer-podium-wrap">
                 <div class="podium-col pod-2">
                     <div class="medal">🥈</div>
                     <div id="p2-name">-</div>
@@ -428,8 +484,24 @@
                 </div>
             </div>
 
+            <!-- Self-Paced Solo Summary Stats -->
+            <div class="solo-stats-grid" id="solo-summary-stats" style="display: none;">
+                <div class="solo-stat-box">
+                    <div class="solo-stat-val" id="solo-final-score">0</div>
+                    <div class="solo-stat-lbl">Total Points</div>
+                </div>
+                <div class="solo-stat-box">
+                    <div class="solo-stat-val" id="solo-correct-count">0/20</div>
+                    <div class="solo-stat-lbl">Correct Answers</div>
+                </div>
+                <div class="solo-stat-box">
+                    <div class="solo-stat-val" id="solo-accuracy-pct">0%</div>
+                    <div class="solo-stat-lbl">Accuracy</div>
+                </div>
+            </div>
+
             <table class="winner-table">
-                <thead>
+                <thead id="end-table-head">
                     <tr>
                         <th style="width: 15%;">Rank</th>
                         <th>Player Name</th>
@@ -439,7 +511,10 @@
                 <tbody id="leaderboard-tbody"></tbody>
             </table>
 
-            <button class="btn-main" onclick="location.reload()" style="margin-top: 30px; width: 100%;">Exit to Home</button>
+            <div class="btn-row" style="margin-top: 30px;">
+                <button class="btn-main btn-solo" id="solo-replay-btn" onclick="startSelfPaced()" style="display: none;">🔄 Play Again</button>
+                <button class="btn-main" onclick="location.reload()">Exit to Home</button>
+            </div>
         </div>
     </div>
 
@@ -563,14 +638,15 @@
                     this.playTone(220, 'sawtooth', 0.25, 0.3, 110);
                 }
             },
-            stopMusic() { if (this.timer) { clearInterval(this.timer); this.timer = null; } }
+            stopMusic() { if (this.timer) { clearInterval(this.timer); this.timer = null; } this.mode = 'none'; }
         };
 
         function toggleAudio() {
             SoundTrack.init(); SoundTrack.muted = !SoundTrack.muted;
             document.getElementById('audio-btn').innerText = SoundTrack.muted ? "🔇 Sound OFF" : "🔊 Sound ON";
-            if (SoundTrack.muted) SoundTrack.stopMusic();
-            else { 
+            if (SoundTrack.muted) {
+                if (SoundTrack.timer) { clearInterval(SoundTrack.timer); SoundTrack.timer = null; }
+            } else { 
                 if (SoundTrack.mode === 'lobby') SoundTrack.startLobbyMusic(); 
                 if (SoundTrack.mode === 'preview') SoundTrack.startPreviewTone();
                 if (SoundTrack.mode === 'game') SoundTrack.startGameMusic(); 
@@ -586,215 +662,216 @@
         catch (e) { console.warn("Firebase initialization error:", e); }
 
         // =================================================================
-        // 3. 20 MCQs: TLSM TRANSFER TO DEFINITIVE CARE
+        // 3. 20 MCQs: TLSM CHAPTER 4 — THORACIC TRAUMA
         // =================================================================
         const quizData = [
             {
-                q: "What is the overarching guiding principle emphasized during the introduction to patient transfer to definitive care?",
+                q: "What are the main causes of morbidity and mortality in thoracic trauma?",
                 options: [
-                    "Transport as fast as possible regardless of stability",
-                    "Do no further harm",
-                    "Complete all tertiary diagnostics prior to departure",
-                    "Delay resuscitation until arrival at the receiving facility"
-                ],
-                correct: 2
-            },
-            {
-                q: "Which sequence correctly reflects the initial flow of managing a trauma patient requiring transfer?",
-                options: [
-                    "Transfer to definitive care -> Initial assessment -> Stabilization",
-                    "Initial assessment -> Transfer to definitive care -> Stabilization",
-                    "Initial assessment -> Stabilization -> Transfer to definitive care",
-                    "Secondary survey -> Transfer protocol -> Initial assessment"
-                ],
-                correct: 3
-            },
-            {
-                q: "What is the fundamental criterion for selecting a patient for transfer to another medical center?",
-                options: [
-                    "Patient preference for private accommodation",
-                    "Patient’s injuries exceeding the hospital's capabilities",
-                    "Completion of at least 24 hours of hospital observation",
-                    "Non-emergent musculoskeletal complaints"
-                ],
-                correct: 2
-            },
-            {
-                q: "Under patient selection, which scenario represents a transfer necessitated by the specific \"injuries sustained\"?",
-                options: [
-                    "Patient presenting in profound shock",
-                    "Requirement for routine laboratory repeat testing",
-                    "Advanced surgical intervention required",
-                    "Family request for logistical convenience"
-                ],
-                correct: 3
-            },
-            {
-                q: "Which clinical scenario illustrates patient selection for transfer based on \"physiological status\"?",
-                options: [
-                    "Requirement for specialized pediatric rehabilitation",
-                    "Patient in profound shock",
-                    "Isolated simple laceration requiring suturing",
-                    "Transfer due to bed shortages during holidays"
-                ],
-                correct: 2
-            },
-            {
-                q: "Which clinical requirement exemplifies a transfer categorized under \"special needs\"?",
-                options: [
-                    "Need for mechanical ventilation, ICU care, or specialized pediatric care",
-                    "Simple non-displaced distal radius fracture",
-                    "Normal physiological vitals requiring outpatient referral",
-                    "Uncomplicated wound dressing change"
+                    "Airway patency, ventilation mechanics and circulatory failure",
+                    "Renal failure, infection and dehydration",
+                    "Neurological injury, hypoglycaemia and fever",
+                    "Liver failure, renal failure and anaemia"
                 ],
                 correct: 1
             },
             {
-                q: "How is \"Step-up care\" defined in the indications for inter-hospital transfer?",
+                q: "Which statement regarding tension pneumothorax is correct?",
                 options: [
-                    "Transfer to a lower-level community hospital for convalescence",
-                    "Transfer warranted in cases of a temporary lack of resources at the referring hospital",
-                    "Transfer to another hospital with appropriate specialty and care for the patient",
-                    "Discharge to an outpatient clinic for physical therapy"
+                    "It is diagnosed primarily by chest X-ray",
+                    "Air enters the pleural space but cannot escape",
+                    "It causes increased venous return",
+                    "It only occurs following penetrating trauma"
+                ],
+                correct: 2
+            },
+            {
+                q: "According to the TLSM chapter, what is the preferred method for immediate decompression of suspected tension pneumothorax?",
+                options: [
+                    "Needle thoracentesis in every case",
+                    "Immediate CT thorax",
+                    "Finger thoracostomy",
+                    "Observation and repeat chest X-ray"
                 ],
                 correct: 3
             },
             {
-                q: "What is the primary clinical justification for a \"Same level care\" patient transfer?",
+                q: "How should an open pneumothorax wound be managed initially according to the chapter?",
                 options: [
-                    "Long-term rehabilitation and step-down management",
-                    "A temporary lack of resources at the referring hospital",
-                    "Providing higher superspeciality surgical intervention",
-                    "Definitive pediatric intensive care unit admission"
+                    "Apply a circumferential pressure bandage",
+                    "Seal with a three-sided occlusive dressing",
+                    "Leave the wound completely uncovered",
+                    "Perform immediate pericardiocentesis"
                 ],
                 correct: 2
             },
             {
-                q: "Which transfer category is designated for patients requiring continuation, rehabilitation, convalescence, or long-term stabilization care?",
+                q: "Which finding is characteristic of massive haemothorax?",
                 options: [
-                    "Step-up care",
-                    "Same level care",
-                    "Step-down care",
-                    "Immediate critical evacuation"
+                    "Pleural blood loss of more than 1,500 mL",
+                    "Pleural blood loss of 100 mL",
+                    "Isolated subcutaneous emphysema",
+                    "Small, asymptomatic pneumothorax"
+                ],
+                correct: 1
+            },
+            {
+                q: "Which finding is an indication for thoracotomy in massive haemothorax, according to the chapter?",
+                options: [
+                    "Initial chest tube drainage of 200 mL",
+                    "Continuous blood accumulation exceeding 200 mL/hour for 2–4 hours",
+                    "Mild chest wall tenderness",
+                    "Small, stable pleural effusion"
+                ],
+                correct: 2
+            },
+            {
+                q: "A trauma patient has persistent air leakage despite chest tube insertion, with failure of the lung to expand fully. Which injury should be suspected?",
+                options: [
+                    "Pulmonary contusion",
+                    "Rib fracture alone",
+                    "Tracheobronchial tree injury",
+                    "Blunt cardiac injury"
                 ],
                 correct: 3
             },
             {
-                q: "In addition to clinical indications, which other factor is recognized as a valid reason for patient transport?",
+                q: "What is an important airway management consideration in tracheobronchial injury?",
                 options: [
-                    "Automatic routine transfer of all stable patients",
-                    "Patient’s or family's request, or logistic reasons",
-                    "Direct referral by non-medical scene bystanders",
-                    "Transfer strictly to bypass national triage protocols"
+                    "Avoid definitive airway management",
+                    "Place the endotracheal tube beyond the tear or selectively intubate the unaffected bronchus",
+                    "Remove all chest drains",
+                    "Delay surgical consultation until discharge"
                 ],
                 correct: 2
             },
             {
-                q: "According to the management principles of transfer, when should preparation for definitive transport take place?",
+                q: "What is the primary physiological consequence of cardiac tamponade?",
                 options: [
-                    "Prior to addressing airway or breathing compromise",
-                    "After initial assessment and stabilization have been done, without delay",
-                    "Only after complete recovery from hemorrhagic shock",
-                    "Following discharge from the emergency observation ward"
-                ],
-                correct: 2
-            },
-            {
-                q: "What are the key essential components that constitute a formal Transfer Protocol?",
-                options: [
-                    "Billing procedures, law enforcement debrief, and transport fare collection",
-                    "Transferring team responsibilities, receiving team responsibilities, and proper documentation",
-                    "Bystander statements, dispatch recording, and social services clearance",
-                    "Hospital accreditation review, pharmaceutical marketing, and dietary orders"
-                ],
-                correct: 2
-            },
-            {
-                q: "What is the responsibility of the receiving facility to optimize patient outcomes during inter-facility transfer?",
-                options: [
-                    "Facilitate the process to avoid delay in providing definitive care",
-                    "Require the referring hospital to perform all definitive surgeries before transfer",
-                    "Refuse handoff until the patient is completely extubated",
-                    "Defer team mobilization until the patient reaches the emergency entrance"
-                ],
-                correct: 1
-            },
-            {
-                q: "To prevent errors and ensure safety, the transfer process must be carried out systematically according to which framework?",
-                options: [
-                    "Informal verbal communication between drivers",
-                    "Pre-existing agreements or transfer protocols",
-                    "Paramedic discretion without receiving facility notification",
-                    "The receiving facility's admission queue order"
-                ],
-                correct: 2
-            },
-            {
-                q: "What aspect of ongoing physiologic support is mandatory for critical patients during transport?",
-                options: [
-                    "Continuous support of the cardio-respiratory system",
-                    "Withholding all ventilatory support to test spontaneous breathing",
-                    "Discontinuation of oxygen to conserve ambulance tank pressure",
-                    "Intermittent respiratory support only if apnea develops"
-                ],
-                correct: 1
-            },
-            {
-                q: "Regarding circulation during inter-hospital transport, what critical intervention must be maintained for unstable patients?",
-                options: [
-                    "Immediate cessation of all IV lines to avoid movement displacement",
-                    "Continuous volume replacement",
-                    "Fluid restriction in all hypotensive trauma victims",
-                    "Rapid fluid shifts using unwarmed hypotonic water"
-                ],
-                correct: 2
-            },
-            {
-                q: "Which ongoing monitoring practice is essential while en route to definitive care?",
-                options: [
-                    "Monitoring of vital signs",
-                    "Serial whole-body plain radiographs",
-                    "Hourly diagnostic peritoneal lavage",
-                    "Continuous laboratory cross-matching"
-                ],
-                correct: 1
-            },
-            {
-                q: "What guideline governs pharmacotherapy during transport?",
-                options: [
-                    "Avoid all sedatives and analgesics regardless of distress",
-                    "Administer only medications ordered after arrival at the receiving unit",
-                    "Use appropriate medication during the transfer",
-                    "Administer broad-spectrum systemic chemotherapy"
+                    "Increased cardiac output",
+                    "Increased venous return",
+                    "Reduced venous return and cardiac output",
+                    "Increased pulmonary ventilation"
                 ],
                 correct: 3
             },
             {
-                q: "Which administrative and clinical task is strictly required during the transport phase?",
+                q: "Which intervention may provide immediate decompression of cardiac tamponade but may not be definitive treatment?",
                 options: [
-                    "Archiving pre-injury scholastic and financial records",
-                    "Maintenance of accurate records during the transport",
-                    "Completing post-mortem documentation prior to hospital arrival",
-                    "Drafting definitive discharge summaries"
+                    "Pericardiocentesis",
+                    "Needle thoracentesis",
+                    "Bronchoscopy",
+                    "Intercostal nerve block"
+                ],
+                correct: 1
+            },
+            {
+                q: "Which cardiac rhythm is commonly associated with traumatic cardiac arrest?",
+                options: [
+                    "Sinus bradycardia only",
+                    "Pulseless electrical activity (PEA)",
+                    "First-degree heart block only",
+                    "Sinus rhythm with normal pulse"
                 ],
                 correct: 2
             },
             {
-                q: "Establishing clear, direct communication between the referring and receiving facilities primarily serves to:",
+                q: "Which of the following is classified as a potentially life-threatening thoracic injury in the TLSM chapter?",
                 options: [
-                    "Determine which institution assumes civil liability for the injury",
-                    "Initiate early transfer steps and prepare the receiving team to avoid treatment delay",
-                    "Allow the referring facility to transfer the patient without written documentation",
-                    "Cancel pre-hospital bypass criteria established by local EMS"
+                    "Simple pneumothorax",
+                    "Superficial skin abrasion",
+                    "Isolated forearm fracture",
+                    "Minor scalp laceration"
+                ],
+                correct: 1
+            },
+            {
+                q: "What is the principal pathological process in pulmonary contusion?",
+                options: [
+                    "Air accumulation within the pericardium",
+                    "Bruising of lung tissue with accumulation of blood and other fluids",
+                    "Complete rupture of the diaphragm in every case",
+                    "Isolated injury to the chest wall skin"
                 ],
                 correct: 2
+            },
+            {
+                q: "Which definition best describes flail chest?",
+                options: [
+                    "One rib fractured at a single site",
+                    "Three or more adjacent ribs fractured in two or more places",
+                    "Fracture of the sternum without rib injury",
+                    "Any pneumothorax following trauma"
+                ],
+                correct: 2
+            },
+            {
+                q: "What is the characteristic chest wall movement in flail chest?",
+                options: [
+                    "The affected segment moves outward during inspiration and inward during expiration",
+                    "The affected segment remains completely immobile in all cases",
+                    "The affected segment moves inward during inspiration and outward during expiration",
+                    "Both sides of the chest expand equally in every case"
+                ],
+                correct: 3
+            },
+            {
+                q: "Which cardiac abnormality is commonly associated with blunt cardiac injury?",
+                options: [
+                    "Unexplained sinus tachycardia",
+                    "Isolated sinus arrhythmia in every patient",
+                    "Complete absence of cardiac complications",
+                    "Persistent normal cardiac rhythm without risk"
+                ],
+                correct: 1
+            },
+            {
+                q: "A patient develops sharp, tearing chest pain radiating to the back following major trauma. Which injury should be suspected?",
+                options: [
+                    "Simple rib contusion",
+                    "Traumatic aortic disruption",
+                    "Isolated pulmonary contusion",
+                    "Superficial chest abrasion"
+                ],
+                correct: 2
+            },
+            {
+                q: "Which statement about traumatic diaphragmatic injury is correct?",
+                options: [
+                    "It occurs exclusively on the right side",
+                    "It is always easily identified on initial examination",
+                    "It most often affects the left hemidiaphragm and requires surgical repair",
+                    "It is definitively treated with analgesia alone"
+                ],
+                correct: 3
+            },
+            {
+                q: "Fractures of the ninth to eleventh ribs are associated with an increased risk of injury to which organs?",
+                options: [
+                    "Brain and spinal cord",
+                    "Liver and spleen",
+                    "Thyroid and oesophagus",
+                    "Bladder and urethra"
+                ],
+                correct: 2
+            },
+            {
+                q: "According to the TLSM chapter, which patient may be considered for emergency department resuscitative thoracotomy?",
+                options: [
+                    "A stable patient with isolated rib pain",
+                    "A patient with a minor chest wall abrasion",
+                    "A patient with blunt or penetrating thoracic trauma in a peri-arrest state with refractory systolic blood pressure below 70 mmHg despite adequate resuscitation",
+                    "A patient with a small, asymptomatic pneumothorax"
+                ],
+                correct: 3
             }
         ];
 
         // =================================================================
-        // 4. MULTIPLAYER ENGINE WITH DYNAMIC TIME-BASED SCORING
+        // 4. GAME ENGINE (MULTIPLAYER + SELF-PACED SOLO)
         // =================================================================
         let isHost = false;
+        let isSelfPaced = false;
         let roomPin = "";
         let myId = "usr_" + Math.random().toString(36).substring(2, 9);
         let myName = "";
@@ -802,6 +879,7 @@
         let myScore = 0;
         let myChoiceThisRound = null;
         let roundEarnedPoints = 0; 
+        let selfPacedHistory = [];
         let previewCountdown = null;
         let timerCountdown = null;
         let autoAdvanceCountdown = null;
@@ -816,16 +894,39 @@
             document.getElementById(id).classList.add('active');
         }
 
-        // Join as Player
+        // Start Self-Paced Solo Mode
+        function startSelfPaced() {
+            const name = document.getElementById('name-input').value.trim();
+            isHost = false;
+            isSelfPaced = true;
+            myName = name || "Solo Trainee";
+            myScore = 0;
+            currentQIndex = 0;
+            selfPacedHistory = [];
+
+            document.getElementById('player-hud-name').innerText = myName;
+            document.getElementById('score-hud').style.display = "inline-block";
+            document.getElementById('answers-counter').style.display = "none";
+
+            SoundTrack.init();
+            renderQuestion(0);
+        }
+
+        // Join as Player (Live Multiplayer)
         function joinAsPlayer() {
             const pin = document.getElementById('pin-input').value.trim().toUpperCase();
             const name = document.getElementById('name-input').value.trim();
             if (!pin || !name) { alert("Please enter both Room PIN and Nickname!"); return; }
 
             isHost = false;
+            isSelfPaced = false;
             roomPin = pin;
             myName = name;
+            myScore = 0;
+            currentQIndex = -1;
             document.getElementById('player-hud-name').innerText = myName;
+            document.getElementById('score-hud').style.display = "inline-block";
+            document.getElementById('answers-counter').style.display = "none";
 
             SoundTrack.startLobbyMusic();
             showScreen('lobby-screen');
@@ -840,25 +941,22 @@
             }
         }
 
-        // Host on Main Screen
+        // Host on Main Screen (Live Multiplayer)
         function startAsHost() {
-            const pin = document.getElementById('pin-input').value.trim().toUpperCase() || "TRANSFER" + Math.floor(100 + Math.random() * 900);
+            const pin = document.getElementById('pin-input').value.trim().toUpperCase() || "CHEST" + Math.floor(100 + Math.random() * 900);
             isHost = true;
+            isSelfPaced = false;
             roomPin = pin;
             myName = "HOST";
+            currentQIndex = -1;
             document.getElementById('player-hud-name').innerText = "HOST VIEW";
             document.getElementById('score-hud').style.display = "none";
             document.getElementById('answers-counter').style.display = "inline-block";
 
-            // Generate QR code pointing to https://edhkn.github.io/tlsm/transfer.html (auto-fills pin)
-            const pageUrl = window.location.origin.includes('github.io') 
-                ? window.location.href.split('?')[0] 
-                : "https://edhkn.github.io/tlsm/transfer.html";
-            const targetUrl = `${pageUrl}?pin=${encodeURIComponent(roomPin)}`;
+            // Generate QR code pointing to https://edhkn.github.io/tlsm/thoracic.html (auto-fills pin)
+            const targetUrl = `https://edhkn.github.io/tlsm/thoracic.html?pin=${encodeURIComponent(roomPin)}`;
             const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(targetUrl)}`;
-            
             document.getElementById('host-qr-image').src = qrApiUrl;
-            document.getElementById('qr-url-text').innerText = pageUrl;
             document.getElementById('host-qr-section').style.display = "flex";
 
             SoundTrack.startLobbyMusic();
@@ -878,9 +976,9 @@
             }
         }
 
-        // Real-time synchronization
+        // Real-time synchronization (Live Multiplayer)
         function listenToRoomState() {
-            if (!db) return;
+            if (!db || isSelfPaced) return;
 
             db.ref(`rooms/${roomPin}/players`).on('value', snap => {
                 const players = snap.val() || {};
@@ -956,7 +1054,7 @@
 
             const q = quizData[idx];
             document.getElementById('q-counter').innerText = `Q: ${idx + 1}/${quizData.length}`;
-            if (!isHost) document.getElementById('score-hud').innerText = `Score: ${myScore}`;
+            if (!isHost) document.getElementById('score-hud').innerText = `Score: ${myScore.toLocaleString()}`;
             document.getElementById('question-text').innerText = q.q;
             document.getElementById('player-submitted-banner').style.display = "none";
 
@@ -965,18 +1063,6 @@
             const livePtsBadge = document.getElementById('live-points-badge');
             const previewBox = document.getElementById('preview-box');
             const container = document.getElementById('options-container');
-
-            timerEl.classList.add('timer-preview');
-            phaseBadge.innerText = "Read Question";
-            phaseBadge.style.background = "#ffd700";
-            phaseBadge.style.color = "#1a0b2e";
-            livePtsBadge.style.display = "none";
-            previewBox.style.display = "block";
-            container.style.display = "none";
-
-            if (isHost) {
-                document.getElementById('answers-counter').innerText = `Answers: 0/${totalPlayerCount}`;
-            }
 
             container.innerHTML = '';
             container.classList.remove('disabled-grid');
@@ -999,6 +1085,50 @@
                     container.appendChild(btn);
                 }
             });
+
+            // SELF-PACED MODE: Skip 5-sec preview lockout & remove forced timeout
+            if (isSelfPaced) {
+                isAnsweringPhase = true;
+                answerPhaseStartTime = Date.now();
+
+                previewBox.style.display = "none";
+                container.style.display = "grid";
+
+                timerEl.classList.remove('timer-preview');
+                timerEl.classList.add('timer-selfpaced');
+                timerEl.innerText = "∞";
+
+                phaseBadge.innerText = "Self-Paced";
+                phaseBadge.style.background = "linear-gradient(135deg, #7928ca, #ff0080)";
+                phaseBadge.style.color = "#fff";
+
+                livePtsBadge.style.display = "inline-block";
+                livePtsBadge.innerText = "⚡ 1,000 pts";
+
+                liveScoreInterval = setInterval(() => {
+                    if (!isAnsweringPhase || myChoiceThisRound !== null) return;
+                    const elapsedMs = Math.max(0, Date.now() - answerPhaseStartTime);
+                    const currentPotential = Math.max(500, Math.round(1000 - (500 * (elapsedMs / 20000))));
+                    livePtsBadge.innerText = `⚡ ${currentPotential.toLocaleString()} pts`;
+                }, 50);
+
+                SoundTrack.playPopSfx();
+                return;
+            }
+
+            // LIVE MULTIPLAYER MODE: 5-second preview phase
+            timerEl.classList.remove('timer-selfpaced');
+            timerEl.classList.add('timer-preview');
+            phaseBadge.innerText = "Read Question";
+            phaseBadge.style.background = "#ffd700";
+            phaseBadge.style.color = "#1a0b2e";
+            livePtsBadge.style.display = "none";
+            previewBox.style.display = "block";
+            container.style.display = "none";
+
+            if (isHost) {
+                document.getElementById('answers-counter').innerText = `Answers: 0/${totalPlayerCount}`;
+            }
 
             let previewSeconds = 5;
             timerEl.innerText = previewSeconds;
@@ -1046,7 +1176,7 @@
 
             SoundTrack.playPopSfx();
             setTimeout(() => {
-                if (isAnsweringPhase) SoundTrack.startGameMusic();
+                if (isAnsweringPhase && !isSelfPaced) SoundTrack.startGameMusic();
             }, 300);
 
             secondsLeft = 20;
@@ -1073,20 +1203,39 @@
             clearInterval(liveScoreInterval);
 
             const responseTimeMs = Math.max(0, Date.now() - answerPhaseStartTime);
-            
-            document.getElementById('options-container').classList.add('disabled-grid');
-            document.getElementById('player-submitted-banner').style.display = "block";
-
             const q = quizData[currentQIndex];
-            if (choice === q.correct) {
+            const isCorrect = (choice === q.correct);
+
+            if (isCorrect) {
                 const decayRatio = Math.min(1, responseTimeMs / 20000);
                 roundEarnedPoints = Math.max(500, Math.round(1000 - (500 * decayRatio)));
                 myScore += roundEarnedPoints;
+            } else {
+                roundEarnedPoints = 0;
+            }
 
+            // SELF-PACED MODE: Record history & jump straight to feedback
+            if (isSelfPaced) {
+                selfPacedHistory.push({
+                    qNum: currentQIndex + 1,
+                    question: q.q,
+                    userAnswer: q.options[choice - 1],
+                    correctAnswer: q.options[q.correct - 1],
+                    isCorrect: isCorrect,
+                    points: roundEarnedPoints
+                });
+                renderFeedbackScreen();
+                return;
+            }
+
+            // LIVE MULTIPLAYER MODE: Lock UI & sync with Firebase
+            document.getElementById('options-container').classList.add('disabled-grid');
+            document.getElementById('player-submitted-banner').style.display = "block";
+
+            if (isCorrect) {
                 document.getElementById('live-points-badge').innerText = `⚡ +${roundEarnedPoints} pts (Locked)`;
                 if (db) db.ref(`rooms/${roomPin}/players/${myId}`).update({ score: myScore });
             } else {
-                roundEarnedPoints = 0;
                 document.getElementById('live-points-badge').innerText = `⚡ 0 pts`;
             }
 
@@ -1114,6 +1263,7 @@
             const ansText = document.getElementById('correct-answer-text');
             const ptsText = document.getElementById('feedback-points');
             const hostControls = document.getElementById('host-feedback-controls');
+            const soloControls = document.getElementById('solo-feedback-controls');
 
             ansText.innerText = `Correct Answer: ${q.options[q.correct - 1]}`;
 
@@ -1122,6 +1272,7 @@
                 title.innerText = "Round Completed!";
                 ptsText.style.display = "none";
                 hostControls.style.display = "block";
+                soloControls.style.display = "none";
 
                 let autoSeconds = 5;
                 const autoMsg = document.getElementById('auto-advance-msg');
@@ -1142,6 +1293,16 @@
                 ptsText.style.display = "inline-block";
                 hostControls.style.display = "none";
 
+                if (isSelfPaced) {
+                    soloControls.style.display = "block";
+                    const nextBtn = document.getElementById('solo-next-btn');
+                    nextBtn.innerText = (currentQIndex + 1 < quizData.length)
+                        ? "Next Question ▶"
+                        : "Finish & View Summary 🏆";
+                } else {
+                    soloControls.style.display = "none";
+                }
+
                 if (myChoiceThisRound === q.correct) {
                     banner.className = 'card feedback-banner correct-bg';
                     title.innerText = "Correct!";
@@ -1161,6 +1322,17 @@
             }
         }
 
+        function selfPacedNextQuestion() {
+            if (!isSelfPaced) return;
+            if (currentQIndex + 1 < quizData.length) {
+                currentQIndex++;
+                renderQuestion(currentQIndex);
+            } else {
+                SoundTrack.startPodiumFanfare();
+                showSoloSummary();
+            }
+        }
+
         function hostNextQuestion() {
             clearInterval(autoAdvanceCountdown);
             if (!db) return;
@@ -1176,9 +1348,63 @@
             }
         }
 
+        function showSoloSummary() {
+            showScreen('end-screen');
+            document.getElementById('end-screen-title').innerText = "SELF-PACED SUMMARY";
+            document.getElementById('winner-room-tag').innerText = `Trainee: ${myName}`;
+
+            document.getElementById('multiplayer-podium-wrap').style.display = "none";
+            document.getElementById('solo-summary-stats').style.display = "grid";
+            document.getElementById('solo-replay-btn').style.display = "inline-block";
+
+            const correctCount = selfPacedHistory.filter(h => h.isCorrect).length;
+            const accuracyPct = Math.round((correctCount / quizData.length) * 100);
+
+            document.getElementById('solo-final-score').innerText = myScore.toLocaleString();
+            document.getElementById('solo-correct-count').innerText = `${correctCount} / ${quizData.length}`;
+            document.getElementById('solo-accuracy-pct').innerText = `${accuracyPct}%`;
+
+            document.getElementById('end-table-head').innerHTML = `
+                <tr>
+                    <th style="width: 8%;">#</th>
+                    <th style="width: 42%;">Question</th>
+                    <th style="width: 25%;">Your Answer</th>
+                    <th style="width: 25%;">Correct Answer</th>
+                </tr>
+            `;
+
+            const tbody = document.getElementById('leaderboard-tbody');
+            tbody.innerHTML = '';
+            selfPacedHistory.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = item.isCorrect ? 'review-correct' : 'review-wrong';
+                tr.innerHTML = `
+                    <td><strong>${item.qNum}</strong></td>
+                    <td>${escapeHtml(item.question)}</td>
+                    <td>${item.isCorrect ? '✅' : '❌'} ${escapeHtml(item.userAnswer)}</td>
+                    <td style="color: #00e096;">${escapeHtml(item.correctAnswer)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
         function showPodium() {
             showScreen('end-screen');
+            document.getElementById('end-screen-title').innerText = "FINAL PODIUM";
             document.getElementById('winner-room-tag').innerText = `Room PIN: ${roomPin}`;
+
+            document.getElementById('multiplayer-podium-wrap').style.display = "flex";
+            document.getElementById('solo-summary-stats').style.display = "none";
+            document.getElementById('solo-replay-btn').style.display = "none";
+
+            document.getElementById('end-table-head').innerHTML = `
+                <tr>
+                    <th style="width: 15%;">Rank</th>
+                    <th>Player Name</th>
+                    <th style="width: 25%;">Score</th>
+                </tr>
+            `;
+
             if (!db) return;
 
             db.ref(`rooms/${roomPin}/players`).once('value', snap => {
